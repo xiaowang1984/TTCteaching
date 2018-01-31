@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.GradeDao">
+	<resultMap type="Grade" id="gradeMap">
+		<result column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="type" property="type"/>
+		<result column="place" property="place"/>
+		<result column="room" property="room"/>
+		<result column="state" property="state"/>
+		<result column="start_date" property="startDate"/>
+		<result column="employment_date" property="employmentDate"/>
+		<result column="end" property="end"/>
+		<result column="lecturer" property="lecturer"/>
+		<result column="manager" property="manager"/>
+		<result column="is_del" property="isDel"/>
+	</resultMap>
+	<sql id="selectField">
+		<choose>
+			<when test="fields==null">
+				id,
+	    		name,
+	    		type,
+	    		place,
+	    		room,
+	    		state,
+	    		start_date,
+	    		employment_date,
+	    		end,
+	    		lecturer,
+	    		manager,
+	    		is_del
+			</when>
+			<otherwise>
+				${fields}
+			</otherwise>
+		</choose>
+	</sql>
+    <select id="getGrades" resultMap="gradeMap">
+    	select 
+    		<include refid="selectField"></include>
+    	from 
+    		grade
+    	<where>
+    		<if test="where!=null">
+    			and ${where}
+    		</if>
+    	</where>
+    	<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+    	<if test="withPage==1">
+    		LIMIT #{pageStart},#{pageSize}
+    	</if>
+    </select>
+    <select id="getGrandById" resultMap="gradeMap" parameterType="Grade">
+    	select 
+    		<include refid="selectField"></include>
+    	from 
+    		grade
+    	<where>
+    		id=#{id}
+    	</where>
+    </select>
+    <insert id="add" parameterType="Grade" keyColumn="id" useGeneratedKeys="true">
+    	insert into 
+    		grade
+    		<trim prefix="(" suffix=")" suffixOverrides=",">
+    			<if test="name != null">
+    				name,
+    			</if>
+    			<if test="type != null">
+    				type,
+    			</if>
+    			<if test="place != null">
+    				place,
+    			</if>
+    			<if test="room != null">
+    				room,
+    			</if>
+    			<if test="state != null">
+    				state,
+    			</if>
+				<if test="startDate != null">
+    				start_date,
+    			</if>
+				<if test="employmentDate != null">
+    				employment_date,
+    			</if>
+    			<if test="end != null">
+    				end,
+    			</if>
+				<if test="lecturer != null">
+    				lecturer,
+    			</if>
+				<if test="manager != null">
+    				manager,
+    			</if>
+				<if test="isDel != null">
+    				is_del,
+    			</if>	
+    		</trim>
+    		<trim prefix="values (" suffix=")" suffixOverrides=",">
+    			<if test="name != null">
+    				#{name},
+    			</if>
+    			<if test="type != null">
+    				#{type},
+    			</if>
+    			<if test="place != null">
+    				#{place},
+    			</if>
+    			<if test="room != null">
+    				#{room},
+    			</if>
+    			<if test="state != null">
+    				#{state},
+    			</if>
+				<if test="startDate != null">
+    				#{startDate},
+    			</if>
+				<if test="employmentDate != null">
+    				#{employmentDate},
+    			</if>
+    			<if test="end != null">
+    				#{end},
+    			</if>
+				<if test="lecturer != null">
+    				#{lecturer},
+    			</if>
+				<if test="manager != null">
+    				#{manager},
+    			</if>
+				<if test="isDel != null">
+    				#{isDel},
+    			</if>	
+    		</trim>
+    </insert>
+	<update id="update" parameterType="Grade">
+		update grade 
+			<set>
+				<if test="name != null">
+    				name=#{name},
+    			</if>
+    			<if test="type != null">
+    				type=#{type},
+    			</if>
+    			<if test="place != null">
+    				place=#{place},
+    			</if>
+    			<if test="room != null">
+    				room=#{room},
+    			</if>
+    			<if test="state != null">
+    				state=#{state},
+    			</if>
+				<if test="startDate != null">
+    				start_date=#{startDate},
+    			</if>
+				<if test="employmentDate != null">
+    				employment_date=#{employmentDate},
+    			</if>
+    			<if test="end != null">
+    				end=#{end},
+    			</if>
+				<if test="lecturer != null">
+    				lecturer=#{lecturer},
+    			</if>
+				<if test="manager != null">
+    				manager=#{manager},
+    			</if>
+				<if test="isDel != null">
+    				is_del=#{isDel},
+    			</if>	
+			</set>
+			<where>
+				id=#{id}
+			</where>
+	</update>
+	<update id="del" parameterType="java.lang.Integer">
+		update grade set is_del=0 where id=#{1}
+	</update>
+	<select id="getCount" resultType="java.lang.Integer" parameterType="Grade" >
+		select count(1) from grade 
+		<where>
+    		<if test="where!=null">
+    			and ${where}
+    		</if>
+    	</where>
+	</select>
+	<select id="getTeacher" resultType="java.lang.String" parameterType="java.lang.Integer">
+		select name from teacher where id=#{1}
+	</select>
+	<select id="getImgByGid" resultType="java.lang.String" parameterType="java.lang.Integer">
+		select img from course as a 
+		left join plan as b on a.id=b.c_id 
+		left join arrange as c on b.id=c.p_id
+		where c.g_id=#{1} ORDER BY c.id desc LIMIT 1
+	</select>
+</mapper>

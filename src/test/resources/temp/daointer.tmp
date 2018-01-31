@@ -1,0 +1,14 @@
+package com.neuedu.dao;
+
+import java.util.List;
+
+import com.neuedu.pojo.[Bean];
+
+public interface [Bean]Dao {
+	public List<[Bean]> get[Bean]s([Bean] [bean]);
+	public int add([Bean] [bean]);
+	public int update([Bean] [bean]);
+	public int del(int id);
+	public [Bean] get[Bean]ById([Bean] [bean]);
+	public int getCount([Bean] [bean]);
+}

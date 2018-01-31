@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.ArrangeListDao">
+	<resultMap type="ArrangeList" id="arrangeListMap">
+		<result column="id" property="id"></result>
+		<result column="a_id" property="aId"></result>
+		<result column="date" property="date"></result>
+		<result column="morning" property="morning"></result>
+		<result column="afternoon" property="afternoon"></result>
+		<result column="night" property="night"></result>
+		<result column="mtime" property="mtime"></result>
+		<result column="atime" property="atime"></result>
+		<result column="ntime" property="ntime"></result>
+		<result column="work" property="work"></result>
+		<result column="remark" property="remark"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, a_id, date, morning, afternoon,night,mtime,atime,ntime, work, remark 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getArrangeLists" resultMap="arrangeListMap" parameterType="ArrangeList">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from arrange_list 
+ 		<where>
+ 			<if test="aId!=null">
+ 				and a_id=#{aId} 
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="ArrangeList">
+     	insert into 
+     		arrange_list
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="aId!=null">
+					a_id,
+				</if>
+				<if test="date!=null">
+					date,
+				</if>
+				<if test="morning!=null">
+					morning,
+				</if>
+				<if test="afternoon!=null">
+					afternoon,
+				</if>
+				<if test="night!=null">
+					night,
+				</if>
+				<if test="mtime!=null">
+					mtime,
+				</if>
+				<if test="atime!=null">
+					atime,
+				</if>
+				<if test="ntime!=null">
+					ntime,
+				</if>
+				<if test="work!=null">
+					work,
+				</if>
+				<if test="remark!=null">
+					remark,
+				</if>
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="aId!=null">
+					#{aId},
+				</if>
+				<if test="date!=null">
+					#{date},
+				</if>
+				<if test="morning!=null">
+					#{morning},
+				</if>
+				<if test="afternoon!=null">
+					#{afternoon},
+				</if>
+				<if test="night!=null">
+					#{night},
+				</if>
+				<if test="mtime!=null">
+					#{mtime},
+				</if>
+				<if test="atime!=null">
+					#{atime},
+				</if>
+				<if test="ntime!=null">
+					#{ntime},
+				</if>
+				<if test="work!=null">
+					#{work},
+				</if>
+				<if test="remark!=null">
+					#{remark},
+				</if>
+     		</trim>
+     </insert>
+     <update id="update" parameterType="ArrangeList">
+     	update arrange_list 
+     	<set>
+	     	<if test="aId!=null">
+				a_id=#{aId},
+			</if>
+			<if test="date!=null">
+				date=#{date},
+			</if>
+			<if test="morning!=null">
+				morning=#{morning},
+			</if>
+			<if test="afternoon!=null">
+				afternoon=#{afternoon},
+			</if>
+			<if test="night!=null">
+				night=#{night},
+			</if>
+			<if test="mtime!=null">
+				mtime=#{mtime},
+			</if>
+			<if test="atime!=null">
+				atime=#{atime},
+			</if>
+			<if test="ntime!=null">
+				ntime=#{ntime},
+			</if>
+			<if test="work!=null">
+				work=#{work},
+			</if>
+			<if test="remark!=null">
+				remark=#{remark},
+			</if>
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	delete from arrange_list where id=#{1}
+     </delete>
+     <select id="getArrangeListById" resultMap="arrangeListMap" parameterType="ArrangeList">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from arrange_list where id=#{id}
+     </select>
+     <select id="getCount" parameterType="ArrangeList" resultType="java.lang.Integer">
+     	select count(1) from  arrange_list 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+     <select id="getLogs" parameterType="Arrange" resultType="ArrangeList">
+     	select 
+     		a.date,a.morning,a.afternoon,a.night 
+     		from arrange_list as a left join arrange as b 
+			on a.a_id=b.id where b.g_id=#{gId} order by a.date desc
+			limit #{pageStart},#{pageSize}
+     </select>
+     <select id="getLogCount" parameterType="Arrange" resultType="java.lang.Integer">
+     	select 
+     		count(1) 
+     		from arrange_list as a left join arrange as b 
+			on a.a_id=b.id where b.g_id=#{gId}
+     </select>
+</mapper>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.ArrangeDao">
+	<resultMap type="Arrange" id="arrangeMap">
+		<result column="id" property="id"></result>
+		<result column="g_id" property="gId"></result>
+		<result column="p_id" property="pId"></result>
+		<result column="type" property="type"></result>
+		<result column="note" property="note"></result>
+		<result column="is_del" property="isDel"></result>
+		<result column="t_id" property="tId"></result>
+		<collection property="arrangeLists" autoMapping="true" javaType="java.util.List" ofType="ArrangeList" select="getList" column="id"></collection>
+	</resultMap>
+	<resultMap type="ArrangeList" id="arrangeListMap">
+		<result column="id" property="id"></result>
+		<result column="date" property="date"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, g_id, p_id, type, note, is_del, t_id 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getArranges" resultMap="arrangeMap" parameterType="Arrange">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from arrange 
+ 		<where>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Arrange" useGeneratedKeys="true" keyProperty="id">
+     	insert into 
+     		arrange
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="id!=null">
+					id,
+				</if>
+				<if test="gId!=null">
+					g_id,
+				</if>
+				<if test="pId!=null">
+					p_id,
+				</if>
+				<if test="type!=null">
+					type,
+				</if>
+				<if test="note!=null">
+					note,
+				</if>
+				<if test="isDel!=null">
+					is_del,
+				</if>
+				<if test="tId!=null">
+					t_id,
+				</if>
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="id!=null">
+				#{id},
+				</if>
+				<if test="gId!=null">
+				#{gId},
+				</if>
+				<if test="pId!=null">
+				#{pId},
+				</if>
+				<if test="type!=null">
+				#{type},
+				</if>
+				<if test="note!=null">
+				#{note},
+				</if>
+				<if test="isDel!=null">
+				#{isDel},
+				</if>
+				<if test="tId!=null">
+				#{tId},
+				</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Arrange">
+     	update arrange 
+     	<set>
+			<if test="gId!=null">
+			g_id=#{gId},
+			</if>
+			<if test="pId!=null">
+			p_id=#{pId},
+			</if>
+			<if test="type!=null">
+			type=#{type},
+			</if>
+			<if test="note!=null">
+			note=#{note},
+			</if>
+			<if test="isDel!=null">
+			is_del=#{isDel},
+			</if>
+			<if test="tId!=null">
+			t_id=#{tId},
+			</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  arrange set is_del=0 where id=#{1}
+     </delete>
+     <select id="getArrangeById" resultMap="arrangeMap" parameterType="Arrange">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from arrange where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Arrange" resultType="java.lang.Integer">
+     	select count(1) from  arrange 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+     <select id="getList" parameterType="java.lang.Integer" resultMap="arrangeListMap">
+     	select id,date from arrange_list where a_id=#{1}
+     </select>
+</mapper>

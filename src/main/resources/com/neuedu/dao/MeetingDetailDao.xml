@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.MeetingDetailDao">
+	<resultMap type="MeetingDetail" id="meetingDetailMap">
+		<result column="id" property="id"></result>
+		<result column="m_id" property="mId"></result>
+		<result column="problem" property="problem"></result>
+		<result column="solve" property="solve"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, m_id, problem, solve 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getMeetingDetails" resultMap="meetingDetailMap" parameterType="MeetingDetail">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from meeting_detail 
+ 		<where>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="MeetingDetail">
+     	insert into 
+     		meeting_detail
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="id!=null">
+id,
+</if>
+<if test="mId!=null">
+m_id,
+</if>
+<if test="problem!=null">
+problem,
+</if>
+<if test="solve!=null">
+solve,
+</if>
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="id!=null">
+#{id},
+</if>
+<if test="mId!=null">
+#{mId},
+</if>
+<if test="problem!=null">
+#{problem},
+</if>
+<if test="solve!=null">
+#{solve},
+</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="MeetingDetail">
+     	update meeting_detail 
+     	<set>
+	     	<if test="id!=null">
+id=#{id},
+</if>
+<if test="mId!=null">
+m_id=#{mId},
+</if>
+<if test="problem!=null">
+problem=#{problem},
+</if>
+<if test="solve!=null">
+solve=#{solve},
+</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  meeting_detail set is_del=0 where id=#{1}
+     </delete>
+     <select id="getMeetingDetailById" resultMap="meetingDetailMap" parameterType="MeetingDetail">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from meeting_detail where id=#{id}
+     </select>
+     <select id="getCount" parameterType="MeetingDetail" resultType="java.lang.Integer">
+     	select count(1) from  meeting_detail 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+</mapper>

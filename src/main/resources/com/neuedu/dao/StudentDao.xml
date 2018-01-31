@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.StudentDao">
+	<resultMap type="Student" id="studentMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="gender" property="gender"></result>
+		<result column="nation" property="nation"></result>
+		<result column="sale" property="sale"></result>
+		<result column="school" property="school"></result>
+		<result column="specialty" property="specialty"></result>
+		<result column="education" property="education"></result>
+		<result column="qq" property="qq"></result>
+		<result column="address" property="address"></result>
+		<result column="email" property="email"></result>
+		<result column="room_no" property="roomNo"></result>
+		<result column="cycle" property="cycle"></result>
+		<result column="refund" property="refund"></result>
+		<result column="phone" property="phone"></result>
+		<result column="id_card" property="idCard"></result>
+		<result column="we_char" property="weChar"></result>
+		<result column="status" property="status"></result>
+		<result column="g_id" property="gId"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, name, gender, nation, sale, school, specialty, education, qq, address, email, room_no, cycle, refund, phone, id_card, we_char,status, g_id, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getStudents" resultMap="studentMap" parameterType="Student">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from student 
+ 		<where>
+ 			<if test="gId!=null">
+ 				and g_id=#{gId}
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Student">
+     	insert into 
+     		student
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+				<if test="name!=null">
+				name,
+				</if>
+				<if test="gender!=null">
+				gender,
+				</if>
+				<if test="nation!=null">
+				nation,
+				</if>
+				<if test="sale!=null">
+				sale,
+				</if>
+				<if test="school!=null">
+				school,
+				</if>
+				<if test="specialty!=null">
+				specialty,
+				</if>
+				<if test="education!=null">
+				education,
+				</if>
+				<if test="qq!=null">
+				qq,
+				</if>
+				<if test="address!=null">
+				address,
+				</if>
+				<if test="email!=null">
+				email,
+				</if>
+				<if test="roomNo!=null">
+				room_no,
+				</if>
+				<if test="cycle!=null">
+				cycle,
+				</if>
+				<if test="refund!=null">
+				refund,
+				</if>
+				<if test="phone!=null">
+				phone,
+				</if>
+				<if test="idCard!=null">
+				id_card,
+				</if>
+				<if test="weChar!=null">
+				we_char,
+				</if>
+				<if test="status!=null">
+				status,
+				</if>
+				<if test="gId!=null">
+				g_id,
+				</if>
+				<if test="isDel!=null">
+				is_del,
+				</if>
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				<if test="name!=null">
+				#{name},
+				</if>
+				<if test="gender!=null">
+				#{gender},
+				</if>
+				<if test="nation!=null">
+				#{nation},
+				</if>
+				<if test="sale!=null">
+				#{sale},
+				</if>
+				<if test="school!=null">
+				#{school},
+				</if>
+				<if test="specialty!=null">
+				#{specialty},
+				</if>
+				<if test="education!=null">
+				#{education},
+				</if>
+				<if test="qq!=null">
+				#{qq},
+				</if>
+				<if test="address!=null">
+				#{address},
+				</if>
+				<if test="email!=null">
+				#{email},
+				</if>
+				<if test="roomNo!=null">
+				#{roomNo},
+				</if>
+				<if test="cycle!=null">
+				#{cycle},
+				</if>
+				<if test="refund!=null">
+				#{refund},
+				</if>
+				<if test="phone!=null">
+				#{phone},
+				</if>
+				<if test="idCard!=null">
+				#{idCard},
+				</if>
+				<if test="weChar!=null">
+				#{weChar},
+				</if>
+				<if test="status!=null">
+				#{status},
+				</if>
+				<if test="gId!=null">
+				#{gId},
+				</if>
+				<if test="isDel!=null">
+				#{isDel},
+				</if>
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Student">
+     	update student 
+     	<set>
+			<if test="name!=null">
+			name=#{name},
+			</if>
+			<if test="gender!=null">
+			gender=#{gender},
+			</if>
+			<if test="nation!=null">
+			nation=#{nation},
+			</if>
+			<if test="sale!=null">
+			sale=#{sale},
+			</if>
+			<if test="school!=null">
+			school=#{school},
+			</if>
+			<if test="specialty!=null">
+			specialty=#{specialty},
+			</if>
+			<if test="education!=null">
+			education=#{education},
+			</if>
+			<if test="qq!=null">
+			qq=#{qq},
+			</if>
+			<if test="address!=null">
+			address=#{address},
+			</if>
+			<if test="email!=null">
+			email=#{email},
+			</if>
+			<if test="roomNo!=null">
+			room_no=#{roomNo},
+			</if>
+			<if test="cycle!=null">
+			cycle=#{cycle},
+			</if>
+			<if test="refund!=null">
+			refund=#{refund},
+			</if>
+			<if test="phone!=null">
+			phone=#{phone},
+			</if>
+			<if test="idCard!=null">
+			id_card=#{idCard},
+			</if>
+			<if test="weChar!=null">
+			we_char=#{weChar},
+			</if>
+			<if test="status!=null">
+			status=#{status},
+			</if>
+			<if test="gId!=null">
+			g_id=#{gId},
+			</if>
+			<if test="isDel!=null">
+			is_del=#{isDel},
+			</if>
+     	</set>
+     	 where id=#{id}
+     </update>
+     <update id="updateByIdCard" parameterType="Student">
+     	update student 
+     	<set>
+			<if test="name!=null">
+			name=#{name},
+			</if>
+			<if test="gender!=null">
+			gender=#{gender},
+			</if>
+			<if test="nation!=null">
+			nation=#{nation},
+			</if>
+			<if test="sale!=null">
+			sale=#{sale},
+			</if>
+			<if test="school!=null">
+			school=#{school},
+			</if>
+			<if test="specialty!=null">
+			specialty=#{specialty},
+			</if>
+			<if test="education!=null">
+			education=#{education},
+			</if>
+			<if test="qq!=null">
+			qq=#{qq},
+			</if>
+			<if test="address!=null">
+			address=#{address},
+			</if>
+			<if test="email!=null">
+			email=#{email},
+			</if>
+			<if test="roomNo!=null">
+			room_no=#{roomNo},
+			</if>
+			<if test="cycle!=null">
+			cycle=#{cycle},
+			</if>
+			<if test="refund!=null">
+			refund=#{refund},
+			</if>
+			<if test="phone!=null">
+			phone=#{phone},
+			</if>
+			<if test="weChar!=null">
+			we_char=#{weChar},
+			</if>
+			<if test="status!=null">
+			status=#{status},
+			</if>
+			<if test="gId!=null">
+			g_id=#{gId},
+			</if>
+			<if test="isDel!=null">
+			is_del=#{isDel},
+			</if>
+     	</set>
+     	 where id_card=#{idCard}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  student set is_del=0 where id=#{1}
+     </delete>
+     <select id="getStudentById" resultMap="studentMap" parameterType="Student">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from student where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Student" resultType="java.lang.Integer">
+     	select count(1) from  student 
+     	<where>
+     		<if test="gId!=null">
+ 				and g_id=#{gId}
+ 			</if>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+</mapper>

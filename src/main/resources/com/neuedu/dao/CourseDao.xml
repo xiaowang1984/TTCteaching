@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.CourseDao">
+	<resultMap type="Course" id="courseMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="img" property="img"></result>
+		<result column="description" property="description"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, name, img, description, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getCourses" resultMap="courseMap" parameterType="Course">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from course 
+ 		<where>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Course">
+     	insert into 
+     		course
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+				<if test="name!=null">
+				name,
+				</if>
+				<if test="img!=null">
+				img,
+				</if>
+				<if test="description!=null">
+				description,
+				</if>
+				<if test="isDel!=null">
+				is_del,
+				</if>
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				<if test="name!=null">
+				#{name},
+				</if>
+				<if test="img!=null">
+				#{img},
+				</if>
+				<if test="description!=null">
+				#{description},
+				</if>
+				<if test="isDel!=null">
+				#{isDel},
+				</if>
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Course">
+     	update course 
+     	<set>
+			<if test="name!=null">
+			name=#{name},
+			</if>
+			<if test="img!=null">
+			img=#{img},
+			</if>
+			<if test="description!=null">
+			description=#{description},
+			</if>
+			<if test="isDel!=null">
+			is_del=#{isDel},
+			</if>
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  course set is_del=0 where id=#{1}
+     </delete>
+     <select id="getCourseById" resultMap="courseMap" parameterType="Course">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from course where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Course" resultType="java.lang.Integer">
+     	select count(1) from  course 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+</mapper>

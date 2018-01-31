@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.WorkDao">
+	<resultMap type="Work" id="workMap">
+		<result column="id" property="id"></result>
+		<result column="al_id" property="alId"></result>
+		<result column="g_id" property="gId"></result>
+		<result column="name" property="name"></result>
+		<result column="type" property="type"></result>
+		<result column="count" property="count"></result>
+		<result column="point" property="point"></result>
+		<result column="description" property="description"></result>
+		<result column="requirement" property="requirement"></result>
+		<result column="start_dat" property="startDat"></result>
+		<result column="end_dat" property="endDat"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, 
+ 					 al_id, 
+ 					 g_id, 
+ 					 name, 
+ 					 type, 
+ 					 count, 
+ 					 point, 
+ 					 description, 
+ 					 requirement, 
+ 					 start_dat,
+ 					 end_dat,
+ 					 is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getWorks" resultMap="workMap" parameterType="Work">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from work 
+ 		<where>
+ 			<if test="gId!=null">
+    			and g_id=#{gId}
+    		</if>
+    		<if test="isDel!=null">
+    			and is_del=#{isDel}
+    		</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Work">
+     	insert into 
+     		work
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="id!=null">
+					id,
+				</if>
+				<if test="alId!=null">
+					al_id,
+				</if>
+				<if test="gId!=null">
+					g_id,
+				</if>
+				<if test="name!=null">
+					name,
+				</if>
+				<if test="type!=null">
+					type,
+				</if>
+				<if test="count!=null">
+					count,
+				</if>
+				<if test="point!=null">
+					point,
+				</if>
+				<if test="description!=null">
+					description,
+				</if>
+				<if test="requirement!=null">
+					requirement,
+				</if>
+				<if test="startDat!=null">
+					start_dat,
+				</if>
+				<if test="endDat!=null">
+					end_dat,
+				</if>
+				<if test="isDel!=null">
+					is_del,
+				</if>
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="id!=null">
+					#{id},
+				</if>
+				<if test="alId!=null">
+					#{alId},
+				</if>
+				<if test="gId!=null">
+					#{gId},
+				</if>
+				<if test="name!=null">
+					#{name},
+				</if>
+				<if test="type!=null">
+					#{type},
+				</if>
+				<if test="count!=null">
+					#{count},
+				</if>
+				<if test="point!=null">
+					#{point},
+				</if>
+				<if test="description!=null">
+					#{description},
+				</if>
+				<if test="requirement!=null">
+					#{requirement},
+				</if>
+				<if test="startDat!=null">
+					#{startDat},
+				</if>
+				<if test="endDat!=null">
+					#{endDat},
+				</if>
+				<if test="isDel!=null">
+					#{isDel},
+				</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Work">
+     	update work 
+     	<set>
+			<if test="gId!=null">
+				g_id=#{gId},
+			</if>
+			<if test="name!=null">
+				name=#{name},
+			</if>
+			<if test="type!=null">
+				type=#{type},
+			</if>
+			<if test="count!=null">
+				count=#{count},
+			</if>
+			<if test="point!=null">
+				point=#{point},
+			</if>
+			<if test="description!=null">
+				description=#{description},
+			</if>
+			<if test="requirement!=null">
+				requirement=#{requirement},
+			</if>
+			<if test="startDat!=null">
+				start_dat=#{startDat},
+			</if>
+			<if test="endDat!=null">
+				end_dat=#{endDat},
+			</if>
+			<if test="isDel!=null">
+				is_del=#{isDel},
+			</if>
+     	</set>
+     	 where al_id=#{alId}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  work set is_del=0 where id=#{1}
+     </delete>
+     <select id="getWorkById" resultMap="workMap" parameterType="Work">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from work where al_id=#{alId}
+     </select>
+     <select id="getCount" parameterType="Work" resultType="java.lang.Integer">
+     	select count(1) from  work 
+     	<where>
+     		<if test="gId!=null">
+    			and g_id=#{gId}
+    		</if>
+    		<if test="isDel!=null">
+    			and is_del=#{isDel}
+    		</if>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+</mapper>

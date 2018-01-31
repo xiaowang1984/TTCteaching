@@ -1,0 +1,58 @@
+package com.neuedu.service.[bean];
+
+import java.util.List;
+
+import javax.annotation.Resource;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMethod;
+import com.neuedu.util.ResultData;
+import org.springframework.stereotype.Service;
+import com.neuedu.util.Message;
+import com.neuedu.dao.[Bean]Dao;
+import com.neuedu.pojo.[Bean];
+
+@RestController
+@RequestMapping("/[bean]")
+public class [Bean]ServiceImpl implements I[bean]Service {
+	@Autowired
+	private [Bean]Dao dao;
+
+	@Override
+	@RequestMapping("/list")
+	public ResultData get[Bean]s([Bean] [bean]) {
+		// TODO Auto-generated method stub
+		return new ResultData(dao.get[Bean]s([bean]),
+				dao.getCount([bean]), [bean].getPageSize(), [bean].getPageNo());
+	}
+
+	@Override
+	@RequestMapping("/add")
+	public Message add([Bean] [bean]) {
+		// TODO Auto-generated method stub
+		return new Message(dao.add([bean]));
+	}
+
+	@Override
+	@RequestMapping(value="/edit",method=RequestMethod.POST)
+	public Message update([Bean] [bean]) {
+		// TODO Auto-generated method stub
+		return new Message(dao.update([bean]));
+	}
+
+	@Override
+	public Message del(int id) {
+		// TODO Auto-generated method stub
+		return new Message(dao.del(id));
+	}
+
+	@Override
+	@RequestMapping(value="/edit",method=RequestMethod.GET)
+	public [Bean] get[Bean]ById([Bean] [bean]) {
+		// TODO Auto-generated method stub
+		return dao.get[Bean]ById([bean]);
+	}
+	
+	
+}

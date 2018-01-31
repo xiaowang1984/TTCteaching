@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.[Bean]Dao">
+	<resultMap type="[Bean]" id="[bean]Map">
+		[resultMap]
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 [field] 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="get[Bean]s" resultMap="[bean]Map" parameterType="[Bean]">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from [table] 
+ 		<where>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="[Bean]">
+     	insert into 
+     		[table]
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		[insertField]
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			[insertValue]
+     		</trim>
+     </insert>
+     <update id="update" parameterType="[Bean]">
+     	update [table] 
+     	<set>
+	     	[updateField]
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  [table] set is_del=0 where id=#{1}
+     </delete>
+     <select id="get[Bean]ById" resultMap="[bean]Map" parameterType="[Bean]">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from [table] where id=#{id}
+     </select>
+     <select id="getCount" parameterType="[Bean]" resultType="java.lang.Integer">
+     	select count(1) from  [table] 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+</mapper>

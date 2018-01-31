@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.MeetingDao">
+	<resultMap type="Meeting" id="meetingMap">
+		<result column="id" property="id"></result>
+		<result column="type" property="type"></result>
+		<result column="date" property="date"></result>
+		<result column="g_id" property="gId"></result>
+		<result column="count" property="count"></result>
+		<collection property="detail" autoMapping="true" javaType="java.util.List" ofType="MeetingDetail" column="id" select="getDetail"></collection>
+	</resultMap>
+	<resultMap type="MeetingDetail" id="meetingDetailMap">
+		<result column="id" property="id"></result>
+		<result column="m_id" property="mId"></result>
+		<result column="problem" property="problem"></result>
+		<result column="solve" property="solve"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, type, date, g_id, count 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getMeetings" resultMap="meetingMap" parameterType="Meeting">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from meeting 
+ 		<where>
+ 			and g_id=#{gId}
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Meeting" useGeneratedKeys="true" keyProperty="id">
+     	insert into 
+     		meeting
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+				<if test="type!=null">
+				type,
+				</if>
+				<if test="date!=null">
+				date,
+				</if>
+				<if test="gId!=null">
+				g_id,
+				</if>
+				<if test="count!=null">
+				count,
+				</if>
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="id!=null">
+				#{id},
+				</if>
+				<if test="type!=null">
+				#{type},
+				</if>
+				<if test="date!=null">
+				#{date},
+				</if>
+				<if test="gId!=null">
+				#{gId},
+				</if>
+				<if test="count!=null">
+				#{count},
+				</if>
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Meeting">
+     	update meeting 
+     	<set>
+			<if test="type!=null">
+			type=#{type},
+			</if>
+			<if test="date!=null">
+			date=#{date},
+			</if>
+			<if test="gId!=null">
+			g_id=#{gId},
+			</if>
+			<if test="count!=null">
+			count=#{count},
+			</if>
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  meeting set is_del=0 where id=#{1}
+     </delete>
+     <select id="getMeetingById" resultMap="meetingMap" parameterType="Meeting">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from meeting where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Meeting" resultType="java.lang.Integer">
+     	select count(1) from  meeting 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+     <select id="getDetail" resultMap="meetingDetailMap" parameterType="java.lang.Integer">
+     	select id,m_id,problem,solve from meeting_detail where m_id=#{1}
+     </select>
+</mapper>

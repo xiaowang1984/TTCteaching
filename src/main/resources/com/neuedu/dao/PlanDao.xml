@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.PlanDao">
+	<resultMap type="Plan" id="planMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="c_id" property="cId"></result>
+		<result column="url" property="url"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, name, c_id,url, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getPlans" resultMap="planMap" parameterType="Plan">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from plan 
+ 		<where>
+ 			<if test="cId!=null">
+ 				and c_id=#{cId}
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Plan">
+     	insert into 
+     		plan
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="id!=null">
+id,
+</if>
+<if test="name!=null">
+name,
+</if>
+<if test="cId!=null">
+c_id,
+</if>
+<if test="url!=null">
+url,
+</if>
+<if test="isDel!=null">
+is_del,
+</if>
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="id!=null">
+#{id},
+</if>
+<if test="name!=null">
+#{name},
+</if>
+<if test="cId!=null">
+#{cId},
+</if>
+<if test="url!=null">
+#{url},
+</if>
+<if test="isDel!=null">
+#{isDel},
+</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Plan">
+     	update plan 
+     	<set>
+	     	<if test="id!=null">
+id=#{id},
+</if>
+<if test="name!=null">
+name=#{name},
+</if>
+<if test="cId!=null">
+c_id=#{cId},
+</if>
+<if test="url!=null">
+url=#{url},
+</if>
+<if test="isDel!=null">
+is_del=#{isDel},
+</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  plan set is_del=0 where id=#{1}
+     </delete>
+     <select id="getPlanById" resultMap="planMap" parameterType="Plan">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from plan where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Plan" resultType="java.lang.Integer">
+     	select count(1) from  plan 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+</mapper>

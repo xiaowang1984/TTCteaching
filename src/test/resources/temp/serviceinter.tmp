@@ -1,0 +1,14 @@
+package com.neuedu.service.[bean];
+
+import java.util.List;
+import com.neuedu.util.Message;
+import com.neuedu.pojo.[Bean];
+import com.neuedu.util.ResultData;
+
+public interface I[bean]Service {
+	public ResultData get[Bean]s([Bean] [bean]);
+	public Message add([Bean] [bean]);
+	public Message update([Bean] [bean]);
+	public Message del(int id);
+	public [Bean] get[Bean]ById([Bean] [bean]);
+}
