@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.TalkDao">
+	<resultMap type="Student" id="studentMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="g_id" property="gId"></result>
+		<result column="is_del" property="isDel"></result>
+		<collection property="talks" column="id" autoMapping="true" javaType="java.util.List" ofType="Talk" select="child"></collection>
+	</resultMap>
+	<resultMap type="Talk" id="talkMap">
+		<result column="id" property="id"></result>
+		<result column="g_id" property="gId"></result>
+		<result column="s_id" property="sId"></result>
+		<result column="t_id" property="tId"></result>
+		<result column="assess" property="assess"></result>
+		<result column="txt" property="txt"></result>
+		<result column="is_del" property="isDel"></result>
+		<association property="tName" javaType="java.lang.String" column="t_id" select="getName"></association>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, g_id, s_id, t_id, assess, txt, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getTalks" resultMap="studentMap" parameterType="Talk">
+ 		select id,name,g_id,is_del from student
+ 		<where>
+ 			<if test="gId!=null">
+ 				and g_id=#{gId}
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+ 	<select id="child" resultMap="talkMap" parameterType="java.lang.Integer">
+ 		select id, g_id, s_id, t_id, assess, txt, is_del from talk where s_id=#{1}
+ 	</select>
+     <insert id="add" parameterType="Talk">
+     	insert into 
+     		talk
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="gId!=null">
+g_id,
+</if>
+<if test="sId!=null">
+s_id,
+</if>
+<if test="tId!=null">
+t_id,
+</if>
+<if test="assess!=null">
+assess,
+</if>
+<if test="txt!=null">
+txt,
+</if>
+<if test="isDel!=null">
+is_del,
+</if>
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="gId!=null">
+#{gId},
+</if>
+<if test="sId!=null">
+#{sId},
+</if>
+<if test="tId!=null">
+#{tId},
+</if>
+<if test="assess!=null">
+#{assess},
+</if>
+<if test="txt!=null">
+#{txt},
+</if>
+<if test="isDel!=null">
+#{isDel},
+</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Talk">
+     	update talk 
+     	<set>
+	     	<if test="gId!=null">
+g_id=#{gId},
+</if>
+<if test="sId!=null">
+s_id=#{sId},
+</if>
+<if test="tId!=null">
+t_id=#{tId},
+</if>
+<if test="assess!=null">
+assess=#{assess},
+</if>
+<if test="txt!=null">
+txt=#{txt},
+</if>
+<if test="isDel!=null">
+is_del=#{isDel},
+</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  talk set is_del=0 where id=#{1}
+     </delete>
+     <select id="getTalkById" resultMap="talkMap" parameterType="Talk">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from talk where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Talk" resultType="java.lang.Integer">
+     	select count(1) from  talk 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+     <select id="getName" resultType="java.lang.String" parameterType="java.lang.Integer">
+     	select name from teacher where id=#{1}
+     </select>
+</mapper>

@@ -7,6 +7,8 @@ import lombok.Data;
 import util.Column;
 import util.ID;
 
+import java.util.List;
+
 import com.neuedu.core.CN;
 @Data
 public class Student extends BaseBean{
@@ -54,5 +56,5 @@ public class Student extends BaseBean{
 	@CN("是否删除")
 	@Column("is_del")
     private Integer isDel;
-
+	private List<Talk> talks;
 }
