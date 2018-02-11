@@ -1,5 +1,7 @@
 package com.neuedu.pojo;
 
+import java.util.Date;
+
 import com.neuedu.util.BaseBean;
 
 import lombok.Data;
@@ -21,4 +23,5 @@ public class Talk extends BaseBean{
 	@Column("is_del")
 	private Integer isDel;
 	private String tName;
+	private Date dat;
 }

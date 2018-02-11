@@ -26,7 +26,7 @@ public class TalkServiceImpl implements ItalkService {
 	@RequestMapping("/list")
 	public ResultData getTalks(Talk talk) {
 		// TODO Auto-generated method stub
-		talk.setWithPage(1);
+		talk.setWithPage(0);
 		Student student=new Student();
 		student.setGId(talk.getGId());
 		return new ResultData(dao.getTalks(talk),

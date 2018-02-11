@@ -5,6 +5,8 @@
 <mapper namespace="com.neuedu.dao.StudentDao">
 	<resultMap type="Student" id="studentMap">
 		<result column="id" property="id"></result>
+		<result column="no" property="no"></result>
+		<result column="git" property="git"></result>
 		<result column="name" property="name"></result>
 		<result column="gender" property="gender"></result>
 		<result column="nation" property="nation"></result>
@@ -28,7 +30,7 @@
 	<sql id="selectFields">
 		<choose>
  				<when test="fields==null">
- 					 id, name, gender, nation, sale, school, specialty, education, qq, address, email, room_no, cycle, refund, phone, id_card, we_char,status, g_id, is_del 
+ 					 id,no,git,name, gender, nation, sale, school, specialty, education, qq, address, email, room_no, cycle, refund, phone, id_card, we_char,status, g_id, is_del 
  				</when>
  				<otherwise>
  					${fields}
@@ -58,6 +60,12 @@
      	insert into 
      		student
      		<trim prefix="(" suffix=")" suffixOverrides=",">
+     			<if test="no!=null">
+				no,
+				</if>
+				<if test="git!=null">
+				git,
+				</if>
 				<if test="name!=null">
 				name,
 				</if>
@@ -117,6 +125,12 @@
 				</if>
      		</trim>
      		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="no!=null">
+				#{no},
+				</if>
+				<if test="git!=null">
+				#{git},
+				</if>
 				<if test="name!=null">
 				#{name},
 				</if>
@@ -179,6 +193,12 @@
      <update id="update" parameterType="Student">
      	update student 
      	<set>
+     		<if test="no!=null">
+			no=#{no},
+			</if>
+			<if test="git!=null">
+			git=#{git},
+			</if>
 			<if test="name!=null">
 			name=#{name},
 			</if>
@@ -242,6 +262,12 @@
      <update id="updateByIdCard" parameterType="Student">
      	update student 
      	<set>
+     		<if test="no!=null">
+			no=#{no},
+			</if>
+			<if test="git!=null">
+			git=#{git},
+			</if>
 			<if test="name!=null">
 			name=#{name},
 			</if>

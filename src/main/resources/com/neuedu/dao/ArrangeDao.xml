@@ -11,6 +11,8 @@
 		<result column="note" property="note"></result>
 		<result column="is_del" property="isDel"></result>
 		<result column="t_id" property="tId"></result>
+		<result column="project" property="project"></result>
+		<result column="git" property="git"></result>
 		<collection property="arrangeLists" autoMapping="true" javaType="java.util.List" ofType="ArrangeList" select="getList" column="id"></collection>
 	</resultMap>
 	<resultMap type="ArrangeList" id="arrangeListMap">
@@ -20,7 +22,7 @@
 	<sql id="selectFields">
 		<choose>
  				<when test="fields==null">
- 					 id, g_id, p_id, type, note, is_del, t_id 
+ 					 id, g_id, p_id, type, note, is_del, t_id ,project,git
  				</when>
  				<otherwise>
  					${fields}
@@ -68,6 +70,12 @@
 				<if test="tId!=null">
 					t_id,
 				</if>
+				<if test="project!=null">
+					project,
+				</if>
+				<if test="git!=null">
+					git,
+				</if>
      		</trim>
      		<trim prefix="values (" suffix=")" suffixOverrides=",">
      			<if test="id!=null">
@@ -91,7 +99,12 @@
 				<if test="tId!=null">
 				#{tId},
 				</if>
-
+				<if test="project!=null">
+				#{project},
+				</if>
+				<if test="git!=null">
+				#{git},
+				</if>
      		</trim>
      </insert>
      <update id="update" parameterType="Arrange">
@@ -115,7 +128,12 @@
 			<if test="tId!=null">
 			t_id=#{tId},
 			</if>
-
+			<if test="project!=null">
+			project=#{project},
+			</if>
+			<if test="git!=null">
+			git=#{git},
+			</if>
      	</set>
      	 where id=#{id}
      </update>

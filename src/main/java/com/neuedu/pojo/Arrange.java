@@ -24,4 +24,6 @@ public class Arrange extends BaseBean{
 	private Integer tId;
 	private List<ArrangeList> arrangeLists;
 	private Plan plan;
+	private String project;
+	private String git;
 }

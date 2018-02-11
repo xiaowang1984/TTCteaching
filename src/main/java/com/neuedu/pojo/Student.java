@@ -14,6 +14,8 @@ import com.neuedu.core.CN;
 public class Student extends BaseBean{
 	@ID
     private Integer id;
+	private Integer no;
+	private String git;
 	@CN("姓名")
     private String name;
 	@CN("性别")

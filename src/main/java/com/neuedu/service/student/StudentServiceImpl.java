@@ -29,6 +29,8 @@ public class StudentServiceImpl implements IstudentService {
 	@RequestMapping("/list")
 	public ResultData getStudents(Student student) {
 		// TODO Auto-generated method stub
+		student.setOrderBy("no asc");
+		student.setWithPage(0);
 		return new ResultData(dao.getStudents(student),
 				dao.getCount(student), student.getPageSize(), student.getPageNo());
 	}
@@ -73,6 +75,8 @@ public class StudentServiceImpl implements IstudentService {
 				if(row.getCell(3)==null||row.getCell(3).toString().trim().equals(""))
 					break;
 				Student student=new Student();
+				float no=Float.parseFloat(row.getCell(3).toString().trim());
+				student.setNo(Math.round(no));
 				student.setGId(gid);
 				student.setName(row.getCell(4).toString());
 				if(row.getCell(5).toString().trim().equals("男"))
