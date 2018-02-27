@@ -1,5 +1,6 @@
 package com.neuedu.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import com.neuedu.pojo.Work;
@@ -11,4 +12,5 @@ public interface WorkDao {
 	public int del(int id);
 	public Work getWorkById(Work work);
 	public int getCount(Work work);
+	public List<Work> getWorksByDat(Date dat);
 }

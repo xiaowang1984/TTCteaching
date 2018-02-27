@@ -56,6 +56,7 @@ public class ArrangeServiceImpl implements IarrangeService {
 			arrangeList.setDate(date);
 			result+=arrangeListDao.add(arrangeList);
 		}
+		
 		return new Message(result);
 	}
 

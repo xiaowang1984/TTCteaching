@@ -24,7 +24,7 @@
 	<sql id="selectFields">
 		<choose>
  				<when test="fields==null">
- 					 id, g_id, s_id, t_id, assess, txt, is_del
+ 					 id, g_id, s_id, t_id, assess, txt, is_del,dat
  				</when>
  				<otherwise>
  					${fields}

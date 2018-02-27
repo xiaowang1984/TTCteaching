@@ -16,6 +16,21 @@
 		<result column="start_dat" property="startDat"></result>
 		<result column="end_dat" property="endDat"></result>
 		<result column="is_del" property="isDel"></result>
+		<association property="workGrade" column="id" javaType="com.neuedu.pojo.WorkGrade" select="getWorkGrade"></association>
+	</resultMap>
+	<resultMap type="WorkGrade" id="workGradeMap">
+		<result column="id" property="id"></result>
+		<result column="w_id" property="wId"></result>
+		<result column="count" property="count"></result>
+		<result column="is_del" property="isDel"></result>
+		<collection property="workGradeDetails" javaType="java.util.List" ofType="WorkGradeDetail" column="id" select="getWorkGradeDetails"></collection>
+	</resultMap>
+	<resultMap type="WorkGradeDetail" id="workGradeDetailMap">
+		<result column="id" property="id"></result>
+		<result column="wg_id" property="wgId"></result>
+		<result column="dat" property="dat"></result>
+		<result column="count" property="count"></result>
+		<result column="is_del" property="isDel"></result>
 	</resultMap>
 	<sql id="selectFields">
 		<choose>
@@ -60,7 +75,7 @@
  			limit #{pageStart},#{pageSize}
  		</if>
  	</select>
-     <insert id="add" parameterType="Work">
+     <insert id="add" parameterType="Work" useGeneratedKeys="true" keyProperty="id">
      	insert into 
      		work
      		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -199,5 +214,17 @@
     			and ${where}
     		</if>
      	</where>
+     </select>
+     <select id="getWorkGrade" resultMap="workGradeMap" parameterType="java.lang.Integer">
+     	select id,w_id,count,is_del from work_grade where w_id=#{1} and is_del=1
+     </select>
+     <select id="getWorkGradeDetails" resultMap="workGradeDetailMap" parameterType="java.lang.Integer">
+     	select id,wg_id,dat,count from work_grade_detail where wg_id=#{1} and is_del=1
+     </select>
+     <select id="getWorksByDat" resultMap="workMap" parameterType="java.util.Date">
+     	select
+ 			id,name
+ 		from work 
+ 		where start_dat&lt;=#{1} and end_dat&gt;=#{1}
      </select>
 </mapper>

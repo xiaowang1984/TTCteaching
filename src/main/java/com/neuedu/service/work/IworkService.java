@@ -16,5 +16,5 @@ public interface IworkService {
 	public Message del(int id);
 	public Work getWorkById(Work work);
 	public List<Cases> getCases(Cases cases);
-	public Message save(Work work,Student student);
+	public void progress();
 }

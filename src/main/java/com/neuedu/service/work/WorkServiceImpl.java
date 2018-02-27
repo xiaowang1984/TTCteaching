@@ -1,27 +1,37 @@
 package com.neuedu.service.work;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.neuedu.util.ResultData;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.neuedu.util.Message;
+import com.alibaba.fastjson.JSONObject;
 import com.neuedu.dao.CasesDao;
 import com.neuedu.dao.GradeDao;
 import com.neuedu.dao.StudentDao;
 import com.neuedu.dao.WorkDao;
-import com.neuedu.dao.WorkListDao;
+import com.neuedu.dao.WorkGradeDao;
+import com.neuedu.dao.WorkStudentDao;
 import com.neuedu.pojo.Cases;
 import com.neuedu.pojo.Grade;
+import com.neuedu.pojo.Progress;
 import com.neuedu.pojo.Student;
 import com.neuedu.pojo.Work;
-import com.neuedu.pojo.WorkList;
+import com.neuedu.pojo.WorkGrade;
+import com.neuedu.pojo.WorkStudent;
 import com.neuedu.pojo.WorkView;
 
 @RestController
@@ -34,32 +44,57 @@ public class WorkServiceImpl implements IworkService {
 	@Autowired
 	private StudentDao studentDao;
 	@Autowired
-	private WorkListDao workListDao;
-	@Autowired
 	private GradeDao gradeDao;
+	@Autowired
+	private WorkGradeDao workGradeDao;
+	@Autowired
+	private WorkStudentDao workStudentDao;
 	@Override
 	@RequestMapping("/list")
 	public WorkView getWorks(Work work) {
 		// TODO Auto-generated method stub
+		Student studentQuery=new Student();
+		studentQuery.setGId(work.getGId());
 		Grade gradeQuery=new Grade();
-		gradeQuery.setFields("id,name");
+		gradeQuery.setFields("id,name,type");
 		gradeQuery.setId(work.getGId());
 		Grade grade= gradeDao.getGrandById(gradeQuery);
+		grade.setStuCount(studentDao.getCount(studentQuery));
 		WorkView workView=new WorkView();
 		workView.setGrade(grade);
 		work.setIsDel(1);
 		ResultData data= new ResultData(dao.getWorks(work),
 				dao.getCount(work), work.getPageSize(), work.getPageNo());
 		workView.setWorks(data);
-		System.out.println(workView.getWorks().getList());
+		progress();
 		return workView;
 	}
 
 	@Override
 	@RequestMapping("/add")
+	@Transactional
 	public Message add(Work work) {
 		// TODO Auto-generated method stub
-		return new Message(dao.add(work));
+		int result=dao.add(work);
+		WorkGrade workGrade=new WorkGrade();
+		workGrade.setCount(0);
+		workGrade.setWId(work.getId());
+		workGrade.setIsDel(1);
+		result+=workGradeDao.add(workGrade);
+		Student studentQuery=new Student();
+		studentQuery.setFields("id");
+		studentQuery.setGId(work.getGId());
+		studentQuery.setWithPage(0);
+		List<Student> students=studentDao.getStudents(studentQuery);
+		for (Student student : students) {
+			WorkStudent workStudent=new WorkStudent();
+			workStudent.setCount(0);
+			workStudent.setIsDel(1);
+			workStudent.setWgId(work.getId());
+			workStudent.setSId(student.getId());
+			result+=workStudentDao.add(workStudent);
+		}
+		return new Message(result);
 	}
 
 	@Override
@@ -90,31 +125,44 @@ public class WorkServiceImpl implements IworkService {
 		cases.setWithPage(0);
 		return casesDao.getCasess(cases);
 	}
-	
-	@Transactional
-	@RequestMapping("/save")
-	public Message save(Work work,Student student) {
+
+	@Override
+	public void progress() {
 		// TODO Auto-generated method stub
-		Integer alId=work.getAlId();
-		Work work2=dao.getWorkById(work);
-		int result=0;
-		if(work2==null){
-			student.setWithPage(0);
-			List<Student> students=studentDao.getStudents(student);
-			for (Student student2 : students) {
-				WorkList workList=new WorkList();
-				workList.setAlId(work.getAlId());
-				workList.setSId(student2.getId());
-				workList.setCount(0);
-				workList.setIsDel(1);
-				result+=workListDao.add(workList);
+		Date dat=new Date();
+		List<Work> works=dao.getWorksByDat(dat);
+		RestTemplate restTemplate=new RestTemplate();
+		for (Work work : works) {
+			WorkStudent workStudentQuery=new WorkStudent();
+			workStudentQuery.setWhere("wg_id="+work.getId());
+			List<WorkStudent> workStudents=workStudentDao.getWorkStudents(workStudentQuery);
+			for (WorkStudent workStudent : workStudents) {
+				Student studentQuery=new Student();
+				studentQuery.setId(workStudent.getSId());
+				Student student=studentDao.getStudentById(studentQuery);
+				if(StringUtils.isNotBlank(student.getGit())){
+					String str="";
+					int count=0;
+					System.out.println("https://api.github.com/repos/"+student.getGit()+"/"+work.getName()+"/stats/contributors");
+					while(count<3){
+						try{
+							str= restTemplate.getForObject("https://api.github.com/repos/"+student.getGit()+"/"+work.getName()+"/stats/contributors",String.class);
+							List<Progress> progress= JSONObject.parseArray(str, Progress.class);
+							System.out.println("------------------------");
+							System.out.println(progress);
+							break;
+						}catch(Exception ex){
+							count++;
+						}
+					}
+				}
 			}
-			result+=dao.add(work);
-			return new Message(result);
-		}else{
-			return new Message(dao.update(work));
 		}
 		
+		
+		
+		
 	}
+
 	
 }

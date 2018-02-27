@@ -27,5 +27,5 @@ public class Work extends BaseBean{
 	private Date endDat;
 	@Column("is_del")
 	private Integer isDel;
-	private List<WorkList> workList;
+	private WorkGrade workGrade;
 }
