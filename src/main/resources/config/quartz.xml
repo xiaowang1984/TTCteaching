@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/context 
+       http://www.springframework.org/schema/context/spring-context-4.0.xsd
+       http://www.springframework.org/schema/util 
+       http://www.springframework.org/schema/util/spring-util-4.0.xsd 
+       http://www.springframework.org/schema/mvc 
+       http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+">
+	<!-- 添加调度的任务bean 配置对应的class-->
+    <!-- <bean id="mywork" class="com.neuedu.core.TimerWork" /> -->
+    <!--配置调度具体执行的方法-->
+	  <!-- <bean id="myworkdetails"
+	    class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+	    <property name="targetObject" ref="mywork" />
+	    <property name="targetMethod" value="autowork" />
+	    <property name="concurrent" value="false" />
+	  </bean> -->
+	 <!--配置调度执行的触发的时间-->
+	  <!-- <bean id="myPrintTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+	    <property name="jobDetail" ref="myworkdetails" />
+	    <property name="cronExpression">
+	      每天早上0点执行任务调度
+	      <value>0 0 0 * * ?</value>
+	    </property>
+	  </bean> -->
+	   <!-- quartz的调度工厂 调度工厂只能有一个，多个调度任务在list中添加 -->
+	  <!-- <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+	    <property name="triggers">
+	      <list>
+	         所有的调度列表
+	        <ref bean="myPrintTrigger" />
+	      </list>
+	    </property>
+	  </bean> -->
+</beans>

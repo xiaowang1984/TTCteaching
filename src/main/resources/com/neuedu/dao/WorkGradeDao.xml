@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.WorkGradeDao">
+	<resultMap type="WorkGrade" id="workGradeMap">
+		<result column="id" property="id"></result>
+		<result column="w_id" property="wId"></result>
+		<result column="count" property="count"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, w_id, count, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getWorkGrades" resultMap="workGradeMap" parameterType="WorkGrade">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from work_grade 
+ 		<where>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="WorkGrade">
+     	insert into 
+     		work_grade
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="wId!=null">
+				w_id,
+				</if>
+				<if test="count!=null">
+				count,
+				</if>
+				<if test="isDel!=null">
+				is_del,
+				</if>
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="wId!=null">
+#{wId},
+</if>
+<if test="count!=null">
+#{count},
+</if>
+<if test="isDel!=null">
+#{isDel},
+</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="WorkGrade">
+     	update work_grade 
+     	<set>
+	     	<if test="wId!=null">
+w_id=#{wId},
+</if>
+<if test="count!=null">
+count=#{count},
+</if>
+<if test="isDel!=null">
+is_del=#{isDel},
+</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  work_grade set is_del=0 where id=#{1}
+     </delete>
+     <select id="getWorkGradeById" resultMap="workGradeMap" parameterType="WorkGrade">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from work_grade where id=#{id}
+     </select>
+     <select id="getCount" parameterType="WorkGrade" resultType="java.lang.Integer">
+     	select count(1) from  work_grade 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+</mapper>
