@@ -10,25 +10,25 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpRequest;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/git")
-public class GitServiceImpl implements IgitService{
+public class GitServiceImpl {
 
-	@Override
+	
 	@RequestMapping("/upload")
-	public String gitLoad(HttpServletRequest request,HttpServletResponse response) {
+	public String gitLoad(@RequestBody Map<String, String> parameterMap) {
 		// TODO Auto-generated method stub
 		System.out.println("111");
 		File file=new File("/abcd.txt");
-		 Map<String, String[]> parameterMap = request.getParameterMap();
 		 Set<String> keys= parameterMap.keySet();
 		 StringBuilder builder=new StringBuilder();
 		 for (String key : keys) {
 			 
-			builder.append(key+",");
+			builder.append(key+"------"+parameterMap.get(key));
 		}
 		try {
 			FileUtils.writeStringToFile(file, builder.toString());
