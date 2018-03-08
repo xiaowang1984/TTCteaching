@@ -25,19 +25,18 @@ public class GitServiceImpl implements IgitService{
 		File file=new File("/abcd.txt");
 		 Map<String, String[]> parameterMap = request.getParameterMap();
 		 Set<String> keys= parameterMap.keySet();
+		 StringBuilder builder=new StringBuilder();
 		 for (String key : keys) {
-			 StringBuilder builder=new StringBuilder();
-			for(String val : parameterMap.get(key)){
-				builder.append(val+",");
-			}
-			try {
-				FileUtils.writeStringToFile(file, key+"----"+builder.toString(), true);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			 
+			builder.append(key+",");
 		}
-		 return "fdfdsafdsa";
+		try {
+			FileUtils.writeStringToFile(file, builder.toString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 return builder.toString();
 	}
 
 }
