@@ -33,10 +33,10 @@
 		<result column="is_del" property="isDel"></result>
 	</resultMap>
 	<select id="getArrangesByGid" parameterType="java.lang.Integer" resultMap="arrangeMap">
-		select  id, g_id, p_id, type, note, is_del, t_id from arrange where g_id=#{1}
+		select  id, g_id, p_id, type, note, is_del, t_id from arrange where is_del=1 and g_id=#{1}
 	</select>
 	<select id="getList" resultMap="arrangeListMap" parameterType="java.lang.Integer">
-		select id,date,morning,afternoon,mtime,atime,ntime from arrange_list where a_id=#{1} order by date
+		select id,date,morning,afternoon,mtime,atime,ntime from arrange_list where is_del=1 and a_id=#{1} order by date
 	</select>
 	<select id="getPlan" resultMap="planMap" parameterType="java.lang.Integer">
 		select  id, name, c_id, is_del from plan where id=#{i}

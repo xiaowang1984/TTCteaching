@@ -150,7 +150,10 @@
      	 where id=#{id}
      </update>
      <delete id="del" parameterType="java.lang.Integer">
-     	delete from arrange_list where id=#{1}
+     	update arrange_list set is_del=0  where id=#{1}
+     </delete>
+     <delete id="delByAId" parameterType="java.lang.Integer">
+     	update arrange_list set is_del=0 where a_id=#{1}
      </delete>
      <select id="getArrangeListById" resultMap="arrangeListMap" parameterType="ArrangeList">
      	select 

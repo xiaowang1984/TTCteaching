@@ -62,9 +62,11 @@ public class ArrangeServiceImpl implements IarrangeService {
 
 	@Override
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Message update(ArrangeList arrangeList,Date[] dates) {
+	public Message update(String note, Arrange arrange, ArrangeList arrangeList,Date[] dates) {
 		// TODO Auto-generated method stub
 		arrangeList.setWithPage(0);
+		arrangeList.setAId(arrange.getId());
+		dao.update(arrange);
 		List<ArrangeList> arrangeLists = arrangeListDao.getArrangeLists(arrangeList);
 		List<Date> old=new ArrayList<>(arrangeLists.size());
 		int result=0;
@@ -86,9 +88,13 @@ public class ArrangeServiceImpl implements IarrangeService {
 	}
 
 	@Override
+	@Transactional
+	@RequestMapping("/del")
 	public Message del(int id) {
 		// TODO Auto-generated method stub
-		return new Message(dao.del(id));
+		int i=dao.del(id);
+		i+=arrangeListDao.delByAId(id);
+		return new Message(i);
 	}
 
 	@Override

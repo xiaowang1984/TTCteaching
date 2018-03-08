@@ -44,6 +44,9 @@
     	from 
     		grade
     	<where>
+    		<if test="isDel!=null">
+    			and is_del=#{isDel}
+    		</if>
     		<if test="where!=null">
     			and ${where}
     		</if>

@@ -27,6 +27,7 @@ public class GradeServiceImpl implements IgradeService {
 	public ResultData getGrades(Grade grade) {
 		// TODO Auto-generated method stub
 		grade.setOrderBy("start_date desc");
+		grade.setIsDel(1);
 		List<Grade> grades=gradeDao.getGrades(grade);
 		for (Grade grade2 : grades) {
 			grade2.setLecturerName(gradeDao.getTeacher(grade2.getLecturer()));

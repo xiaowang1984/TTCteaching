@@ -14,4 +14,5 @@ public interface ArrangeListDao {
 	public int getCount(ArrangeList arrangeList);
 	public List<ArrangeList> getLogs(Arrange arrange);
 	public int getLogCount(Arrange arrage);
+	public int delByAId(int aId);
 }

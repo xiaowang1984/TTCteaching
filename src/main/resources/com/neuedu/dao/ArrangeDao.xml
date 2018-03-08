@@ -34,6 +34,9 @@
  			<include refid="selectFields"></include>
  		from arrange 
  		<where>
+ 			<if test="isDel!=null">
+    			and is_del=#{isDel}
+    		</if>
  			<if test="where!=null">
     			and ${where}
     		</if>
@@ -138,7 +141,7 @@
      	 where id=#{id}
      </update>
      <delete id="del" parameterType="java.lang.Integer">
-     	update  arrange set is_del=0 where id=#{1}
+     	update arrange set is_del=0 where id=#{1}
      </delete>
      <select id="getArrangeById" resultMap="arrangeMap" parameterType="Arrange">
      	select 
@@ -154,6 +157,6 @@
      	</where>
      </select>
      <select id="getList" parameterType="java.lang.Integer" resultMap="arrangeListMap">
-     	select id,date from arrange_list where a_id=#{1}
+     	select id,date from arrange_list where a_id=#{1} and is_del=1
      </select>
 </mapper>
