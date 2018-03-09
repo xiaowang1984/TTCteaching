@@ -28,7 +28,7 @@ public class GitServiceImpl {
 		 StringBuilder builder=new StringBuilder();
 		 for (String key : keys) {
 			 
-			builder.append(key+"------"+parameterMap.get(key));
+			builder.append(parameterMap.get(key)+"\n");
 		}
 		try {
 			FileUtils.writeStringToFile(file, builder.toString());
