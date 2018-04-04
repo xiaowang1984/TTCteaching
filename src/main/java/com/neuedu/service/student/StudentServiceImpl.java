@@ -104,7 +104,8 @@ public class StudentServiceImpl implements IstudentService {
 					student.setRefund(1);
 				else
 					student.setRefund(0);
-				student.setGit(row.getCell(26).toString().trim());
+				if(row.getCell(26)!=null)
+					student.setGit(row.getCell(26).toString().trim());
 				list.add(student);
 			}
 			int result=bathUpdate(list);

@@ -39,7 +39,7 @@
 		select id,date,morning,afternoon,mtime,atime,ntime from arrange_list where is_del=1 and a_id=#{1} order by date
 	</select>
 	<select id="getPlan" resultMap="planMap" parameterType="java.lang.Integer">
-		select  id, name, c_id, is_del from plan where id=#{i}
+		select  id, name, c_id, is_del from plan where id=#{1}
 	</select>
 	<select id="getCourse" resultMap="courseMap" parameterType="java.lang.Integer">
 		select id, name, img, description, is_del from course where id=#{1}

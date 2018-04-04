@@ -1,5 +1,6 @@
 package test;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -18,24 +19,9 @@ import com.neuedu.service.grade.IgradeService;
 @ContextConfiguration(locations="classpath:applicationContext.xml")
 public class T {
 	public static void main(String[] args) {
-		int[] a={1,2,3,4};
-		int b;
-		int c;
-		int d;
-		for(int i=0;i<a.length;i++){
-			b=a[i];
-			for(int j=0;j<a.length;j++){
-				if(i!=j){
-					c=a[j];
-					for(int k=0;k<a.length;k++){
-						if(k!=j&&k!=i){
-							d=a[k];
-							System.out.println(b*100+c*10+d);
-						}
-					}
-				}
-			}
-		}
+		char[] a={'A','B','C'};
+		System.out.println(Arrays.binarySearch(a, 'T'));
+		
 	}
 	@Resource
 	private GradeDao service;

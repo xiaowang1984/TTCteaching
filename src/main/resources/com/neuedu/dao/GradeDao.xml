@@ -47,6 +47,18 @@
     		<if test="isDel!=null">
     			and is_del=#{isDel}
     		</if>
+    		<if test="name!=null">
+    			and name like concat('%',#{isDel},'%')
+    		</if>
+    		<if test="type!=null">
+    			and type=#{type}
+    		</if>
+    		<if test="lecturer!=null">
+    			and lecturer=#{lecturer}
+    		</if>
+    		<if test="manager!=null">
+    			and manager=#{manager}
+    		</if>
     		<if test="where!=null">
     			and ${where}
     		</if>
@@ -188,6 +200,21 @@
 	<select id="getCount" resultType="java.lang.Integer" parameterType="Grade" >
 		select count(1) from grade 
 		<where>
+    		<if test="isDel!=null">
+    			and is_del=#{isDel}
+    		</if>
+    		<if test="name!=null">
+    			and name like concat('%',#{isDel},'%')
+    		</if>
+    		<if test="type!=null">
+    			and type=#{type}
+    		</if>
+    		<if test="lecturer!=null">
+    			and lecturer=#{lecturer}
+    		</if>
+    		<if test="manager!=null">
+    			and manager=#{manager}
+    		</if>
     		<if test="where!=null">
     			and ${where}
     		</if>
@@ -200,6 +227,6 @@
 		select img from course as a 
 		left join plan as b on a.id=b.c_id 
 		left join arrange as c on b.id=c.p_id
-		where c.g_id=#{1} ORDER BY c.id desc LIMIT 1
+		where c.g_id=#{1} and c.is_del=1  ORDER BY c.id desc LIMIT 1
 	</select>
 </mapper>

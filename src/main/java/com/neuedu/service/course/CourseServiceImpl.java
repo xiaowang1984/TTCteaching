@@ -34,6 +34,7 @@ public class CourseServiceImpl implements IcourseService {
 	@RequestMapping("/list")
 	public ResultData getCourses(Course course) {
 		// TODO Auto-generated method stub
+		course.setOrderBy("name");
 		return new ResultData(dao.getCourses(course),
 				dao.getCount(course), course.getPageSize(), course.getPageNo());
 	}
