@@ -64,12 +64,13 @@ public class ArrangeServiceImpl implements IarrangeService {
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Message update(String note, Arrange arrange, ArrangeList arrangeList,Date[] dates) {
 		// TODO Auto-generated method stub
+		int result=0;
 		arrangeList.setWithPage(0);
 		arrangeList.setAId(arrange.getId());
 		dao.update(arrange);
 		List<ArrangeList> arrangeLists = arrangeListDao.getArrangeLists(arrangeList);
 		List<Date> old=new ArrayList<>(arrangeLists.size());
-		int result=0;
+		
 		for (ArrangeList al : arrangeLists) {
 			old.add(al.getDate());
 			if(!Arrays.asList(dates).contains(al.getDate())){

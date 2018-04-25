@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.TestsDao">
+	<resultMap type="Tests" id="testsMap">
+	<result column="id" property="id"></result>
+<result column="name" property="name"></result>
+<result column="q_id" property="qId"></result>
+<result column="skill" property="skill"></result>
+<result column="facility" property="facility"></result>
+<result column="analysis" property="analysis"></result>
+<result column="is_del" property="isDel"></result>
+
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, name, q_id, skill, facility, analysis, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getTestss" resultMap="testsMap" parameterType="Tests">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from tests 
+ 		<where>
+ 			<if test="isDel!=null">
+    			and is_del=#{isDel}
+    		</if>
+    		<if test="qId!=null">
+    			and q_id=#{qId}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Tests" useGeneratedKeys="true" keyProperty="id">
+     	insert into 
+     		tests
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="name!=null">
+name,
+</if>
+<if test="qId!=null">
+q_id,
+</if>
+<if test="skill!=null">
+skill,
+</if>
+<if test="facility!=null">
+facility,
+</if>
+<if test="analysis!=null">
+analysis,
+</if>
+<if test="isDel!=null">
+is_del,
+</if>
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="name!=null">
+#{name},
+</if>
+<if test="qId!=null">
+#{qId},
+</if>
+<if test="skill!=null">
+#{skill},
+</if>
+<if test="facility!=null">
+#{facility},
+</if>
+<if test="analysis!=null">
+#{analysis},
+</if>
+<if test="isDel!=null">
+#{isDel},
+</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Tests">
+     	update tests 
+     	<set>
+	     	<if test="name!=null">
+name=#{name},
+</if>
+<if test="qId!=null">
+q_id=#{qId},
+</if>
+<if test="skill!=null">
+skill=#{skill},
+</if>
+<if test="facility!=null">
+facility=#{facility},
+</if>
+<if test="analysis!=null">
+analysis=#{analysis},
+</if>
+<if test="isDel!=null">
+is_del=#{isDel},
+</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  tests set is_del=0 where id=#{1}
+     </delete>
+     <select id="getTestsById" resultMap="testsMap" parameterType="Tests">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from tests where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Tests" resultType="java.lang.Integer">
+     	select count(1) from  tests 
+     	<where>
+     		<if test="isDel!=null">
+    			and is_del=#{isDel}
+    		</if>
+    		<if test="qId!=null">
+    			and q_id=#{qId}
+    		</if>
+     	</where>
+     </select>
+</mapper>

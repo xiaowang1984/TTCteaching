@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.ExamDetailsDao">
+	<resultMap type="ExamDetails" id="examDetailsMap">
+		<result column="id" property="id"></result>
+		<result column="s_id" property="sId"></result>
+		<result column="e_id" property="eId"></result>
+		<result column="score" property="score"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, s_id, e_id, score 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getExamDetailss" resultMap="examDetailsMap" parameterType="ExamDetails">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from exam_details 
+ 		<where>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="ExamDetails" useGeneratedKeys="true" keyProperty="id">
+     	insert into 
+     		exam_details
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="sId!=null">
+s_id,
+</if>
+<if test="eId!=null">
+e_id,
+</if>
+<if test="score!=null">
+score,
+</if>
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="sId!=null">
+#{sId},
+</if>
+<if test="eId!=null">
+#{eId},
+</if>
+<if test="score!=null">
+#{score},
+</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="ExamDetails">
+     	update exam_details 
+     	<set>
+	     	<if test="sId!=null">
+s_id=#{sId},
+</if>
+<if test="eId!=null">
+e_id=#{eId},
+</if>
+<if test="score!=null">
+score=#{score},
+</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  exam_details set is_del=0 where id=#{1}
+     </delete>
+     <select id="getExamDetailsById" resultMap="examDetailsMap" parameterType="ExamDetails">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from exam_details where id=#{id}
+     </select>
+     <select id="getCount" parameterType="ExamDetails" resultType="java.lang.Integer">
+     	select count(1) from  exam_details 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+</mapper>

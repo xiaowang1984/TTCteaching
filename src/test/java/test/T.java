@@ -15,12 +15,16 @@ import com.neuedu.pojo.Grade;
 import com.neuedu.pojo.Student;
 import com.neuedu.service.grade.IgradeService;
 
+import redis.clients.jedis.Jedis;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations="classpath:applicationContext.xml")
 public class T {
 	public static void main(String[] args) {
-		char[] a={'A','B','C'};
-		System.out.println(Arrays.binarySearch(a, 'T'));
+		for(int i=0;;i++){
+			System.out.println("aaa");
+			break;
+		}
 		
 	}
 	@Resource

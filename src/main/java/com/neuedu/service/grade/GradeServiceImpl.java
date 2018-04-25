@@ -85,7 +85,6 @@ public class GradeServiceImpl implements IgradeService {
 		map.put("params", params);
 		map.put("paramStr", strParams);
 		result.setAttr(map);
-		System.out.println(grade);
 		return result;
 	}
 

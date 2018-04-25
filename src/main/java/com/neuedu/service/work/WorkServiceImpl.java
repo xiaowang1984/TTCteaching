@@ -143,13 +143,10 @@ public class WorkServiceImpl implements IworkService {
 				if(StringUtils.isNotBlank(student.getGit())){
 					String str="";
 					int count=0;
-					System.out.println("https://api.github.com/repos/"+student.getGit()+"/"+work.getName()+"/stats/contributors");
 					while(count<3){
 						try{
 							str= restTemplate.getForObject("https://api.github.com/repos/"+student.getGit()+"/"+work.getName()+"/stats/contributors",String.class);
 							List<Progress> progress= JSONObject.parseArray(str, Progress.class);
-							System.out.println("------------------------");
-							System.out.println(progress);
 							break;
 						}catch(Exception ex){
 							count++;

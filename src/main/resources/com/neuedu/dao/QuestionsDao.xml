@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.QuestionsDao">
+	<resultMap type="Questions" id="questionsMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="c_id" property="cId"></result>
+		<result column="point" property="point"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, name, c_id, point, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getQuestionss" resultMap="questionsMap" parameterType="Questions">
+ 		select
+ 			a.id, a.name, a.c_id, a.point, a.is_del,b.name as cName
+ 		from questions as a left join course as b on a.c_id=b.id 
+ 		<where>
+ 			<if test="isDel!=null">
+    			and a.is_del=#{isDel}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Questions">
+     	insert into 
+     		questions
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+				<if test="name!=null">
+				name,
+				</if>
+				<if test="cId!=null">
+				c_id,
+				</if>
+				<if test="point!=null">
+				point,
+				</if>
+				<if test="isDel!=null">
+				is_del,
+				</if>
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+				<if test="name!=null">
+				#{name},
+				</if>
+				<if test="cId!=null">
+				#{cId},
+				</if>
+				<if test="point!=null">
+				#{point},
+				</if>
+				<if test="isDel!=null">
+				#{isDel},
+				</if>
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Questions">
+     	update questions 
+     	<set>
+			<if test="name!=null">
+			name=#{name},
+			</if>
+			<if test="cId!=null">
+			c_id=#{cId},
+			</if>
+			<if test="point!=null">
+			point=#{point},
+			</if>
+			<if test="isDel!=null">
+			is_del=#{isDel},
+			</if>
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  questions set is_del=0 where id=#{1}
+     </delete>
+     <select id="getQuestionsById" resultMap="questionsMap" parameterType="Questions">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from questions where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Questions" resultType="java.lang.Integer">
+     	select count(1) from  questions 
+     	<where>
+     		<where>
+	 			<if test="isDel!=null">
+	    			and is_del=#{isDel}
+	    		</if>
+	 		</where>
+     	</where>
+     </select>
+</mapper>

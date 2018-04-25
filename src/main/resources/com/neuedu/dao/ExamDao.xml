@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.ExamDao">
+	<resultMap type="Exam" id="examMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="p_id" property="pId"></result>
+		<result column="no" property="no"></result>
+		<result column="g_id" property="gId"></result>
+		<result column="status" property="status"></result>
+		<result column="start_time" property="startTime"></result>
+		<result column="end_time" property="endTime"></result>
+		<result column="is_del" property="isDel"></result>
+		<association property="pName" column="p_id" javaType="java.lang.String" select="getPname"></association>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, name, p_id, no, g_id, status, start_time, end_time, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getExams" resultMap="examMap" parameterType="Exam">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from exam 
+ 		<where>
+ 			<if test="gId!=null">
+ 				and g_id=#{gId}
+ 			</if>
+ 			<if test="isDel!=null">
+ 				and is_del=#{isDel}
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Exam">
+     	insert into 
+     		exam
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="name!=null">
+name,
+</if>
+<if test="pId!=null">
+p_id,
+</if>
+<if test="no!=null">
+no,
+</if>
+<if test="gId!=null">
+g_id,
+</if>
+<if test="status!=null">
+status,
+</if>
+<if test="startTime!=null">
+start_time,
+</if>
+<if test="endTime!=null">
+end_time,
+</if>
+<if test="isDel!=null">
+is_del,
+</if>
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="name!=null">
+#{name},
+</if>
+<if test="pId!=null">
+#{pId},
+</if>
+<if test="no!=null">
+#{no},
+</if>
+<if test="gId!=null">
+#{gId},
+</if>
+<if test="status!=null">
+#{status},
+</if>
+<if test="startTime!=null">
+#{startTime},
+</if>
+<if test="endTime!=null">
+#{endTime},
+</if>
+<if test="isDel!=null">
+#{isDel},
+</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Exam">
+     	update exam 
+     	<set>
+	     	<if test="name!=null">
+name=#{name},
+</if>
+<if test="pId!=null">
+p_id=#{pId},
+</if>
+<if test="no!=null">
+no=#{no},
+</if>
+<if test="gId!=null">
+g_id=#{gId},
+</if>
+<if test="status!=null">
+status=#{status},
+</if>
+<if test="startTime!=null">
+start_time=#{startTime},
+</if>
+<if test="endTime!=null">
+end_time=#{endTime},
+</if>
+<if test="isDel!=null">
+is_del=#{isDel},
+</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  exam set is_del=0 where id=#{1}
+     </delete>
+     <select id="getExamById" resultMap="examMap" parameterType="Exam">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from exam where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Exam" resultType="java.lang.Integer">
+     	select count(1) from  exam 
+     	<where>
+     		<if test="gId!=null">
+ 				and g_id=#{gId}
+ 			</if>
+ 			<if test="isDel!=null">
+ 				and is_del=#{isDel}
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+     <select id="getPname" resultType="java.lang.String" parameterType="java.lang.Integer">
+     	select name from paper where id=#{1}
+     </select>
+     <select id="getExamByNo" resultMap="examMap" parameterType="java.lang.String">
+     	select 
+     		id, 
+     		name, 
+     		p_id, 
+     		no, 
+     		g_id, 
+     		status, 
+     		start_time, 
+     		end_time, 
+     		is_del 
+     	from exam 
+     		where no=#{1}
+     </select>
+</mapper>

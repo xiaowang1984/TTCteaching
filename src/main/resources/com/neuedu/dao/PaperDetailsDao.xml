@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.PaperDetailsDao">
+	<resultMap type="PaperDetails" id="paperDetailsMap">
+		<result column="id" property="id"></result>
+		<result column="p_id" property="pId"></result>
+		<result column="t_id" property="tId"></result>
+		<result column="is_del" property="isDel"></result>
+		<association property="tName" javaType="java.lang.String" column="t_id" select="getTname"></association>
+		<collection property="options" javaType="java.util.List" column="t_id" ofType="Options" select="getOptions"></collection>
+	</resultMap>
+	<resultMap type="Options" id="optionsMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="is_right" property="isRight"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, p_id, t_id, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getPaperDetailss" resultMap="paperDetailsMap" parameterType="PaperDetails">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from paper_details 
+ 		<where>
+ 			<if test="pId!=null">
+    			p_id=#{pId}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="PaperDetails">
+     	insert into 
+     		paper_details
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="pId!=null">
+p_id,
+</if>
+<if test="tId!=null">
+t_id,
+</if>
+<if test="isDel!=null">
+is_del,
+</if>
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="pId!=null">
+#{pId},
+</if>
+<if test="tId!=null">
+#{tId},
+</if>
+<if test="isDel!=null">
+#{isDel},
+</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="PaperDetails">
+     	update paper_details 
+     	<set>
+	     	<if test="pId!=null">
+p_id=#{pId},
+</if>
+<if test="tId!=null">
+t_id=#{tId},
+</if>
+<if test="isDel!=null">
+is_del=#{isDel},
+</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  paper_details set is_del=0 where id=#{1}
+     </delete>
+     <select id="getPaperDetailsById" resultMap="paperDetailsMap" parameterType="PaperDetails">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from paper_details where id=#{id}
+     </select>
+     <select id="getCount" parameterType="PaperDetails" resultType="java.lang.Integer">
+     	select count(1) from  paper_details 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+     <select id="getTname" resultType="java.lang.String" parameterType="java.lang.Integer">
+     	select name from tests where id=#{1}
+     </select>
+     <select id="getOptions" resultMap="optionsMap" parameterType="java.lang.Integer">
+     	select id,name,is_right from options where t_id=#{1} and is_del=1
+     </select>
+</mapper>
