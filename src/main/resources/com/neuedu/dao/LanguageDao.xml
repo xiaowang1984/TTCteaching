@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.LanguageDao">
+	<resultMap type="Language" id="languageMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="git_url" property="gitUrl"></result>
+		<result column="img_url" property="imgUrl"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	<resultMap type="Language" id="languageChildren">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="git_url" property="gitUrl"></result>
+		<result column="img_url" property="imgUrl"></result>
+		<result column="is_del" property="isDel"></result>
+		<collection property="modules" column="id" javaType="java.util.List" ofType="Module">
+			<result column="mId" property="id"/>
+			<result column="mName" property="name" />
+		</collection>
+	</resultMap>
+	
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, name, git_url, img_url, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getLanguages" resultMap="languageMap" parameterType="Language">
+ 		select 
+			<include refid="selectFields"></include>
+		from language
+			<where>
+			 	is_del=#{isDel}
+			</where>	
+ 	</select>
+     <insert id="add" parameterType="Language">
+     	insert into 
+     		language
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="id!=null">
+id,
+</if>
+<if test="name!=null">
+name,
+</if>
+<if test="gitUrl!=null">
+git_url,
+</if>
+<if test="imgUrl!=null">
+img_url,
+</if>
+<if test="isDel!=null">
+is_del,
+</if>
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="id!=null">
+#{id},
+</if>
+<if test="name!=null">
+#{name},
+</if>
+<if test="gitUrl!=null">
+#{gitUrl},
+</if>
+<if test="imgUrl!=null">
+#{imgUrl},
+</if>
+<if test="isDel!=null">
+#{isDel},
+</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Language">
+     	update language 
+     	<set>
+	     	<if test="id!=null">
+id=#{id},
+</if>
+<if test="name!=null">
+name=#{name},
+</if>
+<if test="gitUrl!=null">
+git_url=#{gitUrl},
+</if>
+<if test="imgUrl!=null">
+img_url=#{imgUrl},
+</if>
+<if test="isDel!=null">
+is_del=#{isDel},
+</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  language set is_del=0 where id=#{1}
+     </delete>
+     <select id="getLanguageById" resultMap="languageMap" parameterType="Language">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from language where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Language" resultType="java.lang.Integer">
+     	select count(1) from  language 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+     <select id="getLanguagesAndModules" resultMap="languageChildren"  >
+     	select  a.id,a.name,a.is_del,b.id as mId,b.name as mName
+		 from language as a left join module as b on a.id=b.l_id and b.is_del=1
+		  where a.is_del=1
+     </select>
+     
+</mapper>

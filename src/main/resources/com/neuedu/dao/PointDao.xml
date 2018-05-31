@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.PointDao">
+	<resultMap type="Point" id="pointMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="description" property="description"></result>
+		<result column="m_id" property="mId"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, name, description, m_id, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getPoints" resultMap="pointMap" parameterType="Point">
+ 		select
+ 			 a.id, a.name, a.description, a.m_id, a.is_del,a.level,a.sort,
+ 			 b.name as mName,c.id as lId,c.name as lName 
+ 		from point as a left join module as b on a.m_id=b.id
+ 		left join language as c on b.l_id=c.id
+ 		<where>
+ 			<if test="isDel!=null">
+ 				and a.is_del=#{isDel} 
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Point">
+     	insert into 
+     		point
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="id!=null">
+				id,
+				</if>
+				<if test="name!=null">
+				name,
+				</if>
+				<if test="description!=null">
+				description,
+				</if>
+				<if test="mId!=null">
+				m_id,
+				</if>
+				<if test="level!=null">
+				level,
+				</if>
+				<if test="sort!=null">
+				sort,
+				</if>
+				<if test="isDel!=null">
+				is_del,
+				</if>
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="id!=null">
+				#{id},
+				</if>
+				<if test="name!=null">
+				#{name},
+				</if>
+				<if test="description!=null">
+				#{description},
+				</if>
+				<if test="mId!=null">
+				#{mId},
+				</if>
+				<if test="level!=null">
+				#{level},
+				</if>
+				<if test="sort!=null">
+				#{sort},
+				</if>
+				<if test="isDel!=null">
+				#{isDel},
+				</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Point">
+     	update point 
+     	<set>
+	     	<if test="id!=null">
+			id=#{id},
+			</if>
+			<if test="name!=null">
+			name=#{name},
+			</if>
+			<if test="description!=null">
+			description=#{description},
+			</if>
+			<if test="mId!=null">
+			m_id=#{mId},
+			</if>
+			<if test="level!=null">
+			level=#{level},
+			</if>
+			<if test="sort!=null">
+			sort=#{sort},
+			</if>
+			<if test="isDel!=null">
+			is_del=#{isDel},
+			</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  point set is_del=0 where id=#{1}
+     </delete>
+     <select id="getPointById" resultMap="pointMap" parameterType="Point">
+     	select
+ 			 a.id, a.name, a.description, a.m_id, a.is_del,a.level,a.sort,
+ 			 b.name as mName,c.id as lId,c.name as lName 
+ 		from point as a left join module as b on a.m_id=b.id
+ 		left join language as c on b.l_id=c.id
+ 		<where>
+ 			a.id=#{id}
+ 		</where>
+     </select>
+     <select id="getCount" parameterType="Point" resultType="java.lang.Integer">
+     	select count(1) from  point 
+     	<where>
+     		<if test="isDel!=null">
+ 				and is_del=#{isDel} 
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+</mapper>

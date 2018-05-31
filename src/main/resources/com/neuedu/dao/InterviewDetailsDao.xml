@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.InterviewDetailsDao">
+	<resultMap type="InterviewDetails" id="interviewDetailsMap">
+		<result column="id" property="id"></result>
+		<result column="i_id" property="iId"></result>
+		<result column="s_id" property="sId"></result>
+		<result column="skill" property="skill"></result>
+		<result column="express" property="express"></result>
+		<result column="mark" property="mark"></result>
+		<result column="is_del" property="isDel"></result>
+		<association property="sname" javaType="java.lang.String" column="s_id" select="getStudentNameById"></association>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, i_id, s_id, skill, express,mark, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getInterviewDetailss" resultMap="interviewDetailsMap" parameterType="InterviewDetails">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from interview_details 
+ 		<where>
+ 			<if test="iId!=null">
+ 				and i_id=#{iId}
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="InterviewDetails">
+     	insert into 
+     		interview_details
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="iId!=null">
+				i_id,
+				</if>
+				<if test="sId!=null">
+				s_id,
+				</if>
+				<if test="skill!=null">
+				skill,
+				</if>
+				<if test="express!=null">
+				express,
+				</if>
+				<if test="mark!=null">
+				mark,
+				</if>
+				<if test="isDel!=null">
+				is_del,
+				</if>
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="iId!=null">
+				#{iId},
+				</if>
+				<if test="sId!=null">
+				#{sId},
+				</if>
+				<if test="skill!=null">
+				#{skill},
+				</if>
+				<if test="express!=null">
+				#{express},
+				</if>
+				<if test="mark!=null">
+				#{mark},
+				</if>
+				<if test="isDel!=null">
+				#{isDel},
+				</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="InterviewDetails">
+     	update interview_details 
+     	<set>
+			<if test="sId!=null">
+			s_id=#{sId},
+			</if>
+			<if test="skill!=null">
+			skill=#{skill},
+			</if>
+			<if test="express!=null">
+			express=#{express},
+			</if>
+			<if test="mark!=null">
+			mark=#{mark},
+			</if>
+			<if test="isDel!=null">
+			is_del=#{isDel},
+			</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  interview_details set is_del=0 where id=#{1}
+     </delete>
+     <select id="getInterviewDetailsById" resultMap="interviewDetailsMap" parameterType="InterviewDetails">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from interview_details where id=#{id}
+     </select>
+     <select id="getCount" parameterType="InterviewDetails" resultType="java.lang.Integer">
+     	select count(1) from  interview_details 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+     <select id="getStudentNameById" resultType="java.lang.String" parameterType="java.lang.Integer">
+     	select name from student where id=#{1}
+     </select>
+</mapper>

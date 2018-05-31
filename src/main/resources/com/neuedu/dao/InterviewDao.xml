@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.InterviewDao">
+	<resultMap type="Interview" id="interviewMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="g_id" property="gId"></result>
+		<result column="dat" property="dat"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	<resultMap type="Interview" id="reportMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="g_id" property="gId"></result>
+		<result column="dat" property="dat"></result>
+		<result column="is_del" property="isDel"></result>
+		<collection property="list" column="id" javaType="java.util.List" ofType="InterviewDetails" select="getInterviewDetailss"></collection>
+	</resultMap>
+	<resultMap type="InterviewDetails" id="interviewDetailsMap">
+		<result column="id" property="id"></result>
+		<result column="i_id" property="iId"></result>
+		<result column="s_id" property="sId"></result>
+		<result column="skill" property="skill"></result>
+		<result column="express" property="express"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, name, g_id, dat,question, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getInterviews" resultMap="interviewMap" parameterType="Interview">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from interview 
+ 		<where>
+ 			<if test="gId!=null">
+ 				and g_id=#{gId}
+ 			</if>
+ 			<if test="isDel!=null">
+ 				and is_del=#{isDel}
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+ 	<select id="getReport" resultMap="reportMap" parameterType="Interview">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from interview 
+ 		<where>
+ 			<if test="gId!=null">
+ 				and g_id=#{gId}
+ 			</if>
+ 			<if test="isDel!=null">
+ 				and is_del=#{isDel}
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Interview" useGeneratedKeys="true" keyProperty="id">
+     	insert into 
+     		interview
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="name!=null">
+name,
+</if>
+<if test="gId!=null">
+g_id,
+</if>
+<if test="dat!=null">
+dat,
+</if>
+<if test="isDel!=null">
+is_del,
+</if>
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="name!=null">
+#{name},
+</if>
+<if test="gId!=null">
+#{gId},
+</if>
+<if test="dat!=null">
+#{dat},
+</if>
+<if test="isDel!=null">
+#{isDel},
+</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Interview">
+     	update interview 
+     	<set>
+	     	<if test="name!=null">
+name=#{name},
+</if>
+<if test="gId!=null">
+g_id=#{gId},
+</if>
+<if test="dat!=null">
+dat=#{dat},
+</if>
+<if test="question!=null">
+	question=#{question},
+</if>
+<if test="isDel!=null">
+is_del=#{isDel},
+</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  interview set is_del=0 where id=#{1}
+     </delete>
+     <select id="getInterviewById" resultMap="interviewMap" parameterType="Interview">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from interview where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Interview" resultType="java.lang.Integer">
+     	select count(1) from  interview 
+     	<where>
+     		<if test="gId!=null">
+ 				and g_id=#{gId}
+ 			</if>
+ 			<if test="isDel!=null">
+ 				and is_del=#{isDel}
+ 			</if>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+     <select id="getInterviewDetailss" resultMap="interviewDetailsMap" parameterType="java.lang.Integer">
+ 		select
+ 			id, i_id, s_id, skill, express,mark, is_del
+ 		from interview_details 
+ 		<where>
+ 			i_id=#{1}
+ 		</where>
+ 	</select>
+</mapper>

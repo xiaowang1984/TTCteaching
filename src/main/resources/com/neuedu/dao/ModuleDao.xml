@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.ModuleDao">
+	<resultMap type="Module" id="moduleMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="l_id" property="lId"></result>
+		<result column="is_del" property="isDel"></result>
+		<result column="sort" property="sort"/>
+		<collection property="points" column="id" javaType="java.util.List" ofType="Point">
+			<result column="pId" property="id"/>
+			<result column="pName" property="name"/>
+			<result column="level" property="level"/>
+			<result column="description" property="description"/>
+		</collection>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, name, l_id,sort, is_del 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getModules" resultMap="moduleMap" parameterType="Module">
+ 		select a.id,a.name,a.l_id,b.id as pId,b.name as pName,b.level,b.description
+			from module as a left join point as b on a.id=b.m_id and b.is_del=1
+		where a.is_del=1 and a.l_id=#{lId}  order by a.sort desc,b.sort desc
+ 	</select>
+     <insert id="add" parameterType="Module">
+     	insert into 
+     		module
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="name!=null">
+					name,
+					</if>
+					<if test="lId!=null">
+					l_id,
+					</if>
+					<if test="sort!=null">
+					sort,
+					</if>
+					<if test="isDel!=null">
+					is_del,
+					</if>
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="name!=null">
+				#{name},
+				</if>
+				<if test="lId!=null">
+				#{lId},
+				</if>
+				<if test="sort!=null">
+				#{sort},
+				</if>
+				<if test="isDel!=null">
+				#{isDel},
+				</if>
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Module">
+     	update module 
+     	<set>
+	     	<if test="name!=null">
+			name=#{name},
+			</if>
+			<if test="lId!=null">
+			l_id=#{lId},
+			</if>
+			<if test="sort!=null">
+			sort=#{sort},
+			</if>
+			<if test="isDel!=null">
+			is_del=#{isDel},
+			</if>
+
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  module set is_del=0 where id=#{1}
+     </delete>
+     <select id="getModuleById" resultMap="moduleMap" parameterType="Module">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from module where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Module" resultType="java.lang.Integer">
+     	select count(1) from  module 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+</mapper>
