@@ -22,7 +22,6 @@ public class GitServiceImpl {
 	@RequestMapping("/upload")
 	public String gitLoad(@RequestBody Map<String, String> parameterMap) {
 		// TODO Auto-generated method stub
-		System.out.println("111");
 		File file=new File("/abcd.txt");
 		 Set<String> keys= parameterMap.keySet();
 		 StringBuilder builder=new StringBuilder();

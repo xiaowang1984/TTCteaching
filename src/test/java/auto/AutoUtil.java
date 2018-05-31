@@ -2,7 +2,7 @@ package auto;
 
 public class AutoUtil {
 	public static final String PACK="com.neuedu.pojo";
-	public static final String BEAN="Brand";
+	public static final String BEAN="Point";
 	public static final String SMALLBEAN=BEAN.substring(0, 1).toLowerCase()+BEAN.substring(1);
 	public static final String BASEPATH=System.getProperty("user.dir");
 	public static final String DAOPATH=BASEPATH+"\\src\\main\\java\\com\\neuedu\\dao";

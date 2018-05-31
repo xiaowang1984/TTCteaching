@@ -48,7 +48,7 @@ public class ExamDetailsServiceImpl implements IexamDetailsService {
 	}
 
 	@Override
-	@RequestMapping(value="/edit",method=RequestMethod.GET)
+	@RequestMapping(value="/get",method=RequestMethod.GET)
 	public ExamDetails getExamDetailsById(ExamDetails examDetails) {
 		// TODO Auto-generated method stub
 		return dao.getExamDetailsById(examDetails);

@@ -1,5 +1,7 @@
 package com.neuedu.pojo;
 
+import java.util.List;
+
 import com.neuedu.util.BaseBean;
 
 import lombok.Data;
@@ -17,4 +19,6 @@ public class ExamDetails extends BaseBean {
 	@Column("e_id")
 	private Integer eId;
 	private Float score;
+	private String sName;
+	private List<ExamStudentDetails> examStudentDetails;
 }

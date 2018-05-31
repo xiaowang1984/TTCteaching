@@ -15,6 +15,24 @@
 		<result column="is_del" property="isDel"></result>
 		<association property="pName" column="p_id" javaType="java.lang.String" select="getPname"></association>
 	</resultMap>
+	<resultMap type="Exam" id="examDetails">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="p_id" property="pId"></result>
+		<result column="no" property="no"></result>
+		<result column="g_id" property="gId"></result>
+		<result column="status" property="status"></result>
+		<result column="start_time" property="startTime"></result>
+		<result column="end_time" property="endTime"></result>
+		<result column="is_del" property="isDel"></result>
+		<collection property="examDetails" column="id" javaType="java.util.List" ofType="ExamDetails">
+			<result column="id" property="id"></result>
+			<result column="s_id" property="sId"></result>
+			<result column="e_id" property="eId"></result>
+			<result column="sName" property="sName"></result>
+			<result column="score" property="score"></result>
+		</collection>
+	</resultMap>
 	<sql id="selectFields">
 		<choose>
  				<when test="fields==null">
@@ -47,7 +65,7 @@
  			limit #{pageStart},#{pageSize}
  		</if>
  	</select>
-     <insert id="add" parameterType="Exam">
+     <insert id="add" parameterType="Exam" >
      	insert into 
      		exam
      		<trim prefix="(" suffix=")" suffixOverrides=",">
@@ -139,10 +157,21 @@ is_del=#{isDel},
      <delete id="del" parameterType="java.lang.Integer">
      	update  exam set is_del=0 where id=#{1}
      </delete>
-     <select id="getExamById" resultMap="examMap" parameterType="Exam">
+     <select id="getExamById" resultMap="examDetails" parameterType="Exam">
      	select 
-     	<include refid="selectFields"></include> 
-     	from exam where id=#{id}
+			a.id,a.name,
+			a.p_id,a.no,
+			a.g_id,a.status,
+			a.start_time,
+			a.end_time,
+			b.id as dId,
+		    b.s_id,
+		    b.e_id,
+		    b.score,
+		    c.name as sName
+		from exam as a left join exam_details as b on a.id=b.e_id 
+		left join student as c on b.s_id=c.id
+		where a.id=#{id}
      </select>
      <select id="getCount" parameterType="Exam" resultType="java.lang.Integer">
      	select count(1) from  exam 
@@ -174,5 +203,19 @@ is_del=#{isDel},
      		is_del 
      	from exam 
      		where no=#{1}
+     </select>
+     <select id="getReport" parameterType="java.lang.Integer" resultType="java.util.Map">
+     	select 
+			a.id,
+			a.p_id,
+			b.t_id,
+			c.name,
+			c.skill,
+		(select count(0) from test_report where e_id=a.id and t_id=b.t_id) as total,
+		(select sum(r) from test_report where e_id=a.id and t_id=b.t_id) as r
+		from exam as a 
+		left join paper_details as b on a.p_id=b.p_id 
+		left join tests as c on b.t_id=c.id
+		  where a.id=#{1}
      </select>
 </mapper>

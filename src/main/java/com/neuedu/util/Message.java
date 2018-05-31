@@ -7,6 +7,10 @@ public class Message {
 		this.code=code;
 		this.mess=code>0?"操作成功":"操作失败";
 	}
+	public Message(Integer code,String mess){
+		this.code=code;
+		this.mess=mess;
+	}
 	public Integer getCode() {
 		return code;
 	}

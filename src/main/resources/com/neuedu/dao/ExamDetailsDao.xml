@@ -7,7 +7,22 @@
 		<result column="id" property="id"></result>
 		<result column="s_id" property="sId"></result>
 		<result column="e_id" property="eId"></result>
+		<result column="sName" property="sName"></result>
 		<result column="score" property="score"></result>
+		<collection property="examStudentDetails" ofType="ExamStudentDetails" javaType="java.util.List" column="id">
+			<result column="bid" property="id"/>
+			<result column="ed_id" property="edId"></result>
+			<result column="t_id" property="tId"></result>
+			<result column="o_id" property="oId"></result>
+			<result column="r_id" property="rId"></result>
+			<result column="tName" property="tName"/>
+			<result column="analysis" property="analysis"/>
+			<collection property="options" javaType="java.util.List" ofType="Options" column="t_id">
+				<result column="optId" property="id"/>
+				<result column="oName" property="name"/>
+				<result column="is_right" property="isRight"/>
+			</collection>
+		</collection>
 	</resultMap>
 	<sql id="selectFields">
 		<choose>
@@ -40,26 +55,26 @@
      		exam_details
      		<trim prefix="(" suffix=")" suffixOverrides=",">
 	     		<if test="sId!=null">
-s_id,
-</if>
-<if test="eId!=null">
-e_id,
-</if>
-<if test="score!=null">
-score,
-</if>
+				s_id,
+				</if>
+				<if test="eId!=null">
+				e_id,
+				</if>
+				<if test="score!=null">
+				score,
+				</if>
 
      		</trim>
      		<trim prefix="values (" suffix=")" suffixOverrides=",">
      			<if test="sId!=null">
-#{sId},
-</if>
-<if test="eId!=null">
-#{eId},
-</if>
-<if test="score!=null">
-#{score},
-</if>
+				#{sId},
+				</if>
+				<if test="eId!=null">
+				#{eId},
+				</if>
+				<if test="score!=null">
+				#{score},
+				</if>
 
      		</trim>
      </insert>
@@ -67,14 +82,14 @@ score,
      	update exam_details 
      	<set>
 	     	<if test="sId!=null">
-s_id=#{sId},
-</if>
-<if test="eId!=null">
-e_id=#{eId},
-</if>
-<if test="score!=null">
-score=#{score},
-</if>
+			s_id=#{sId},
+			</if>
+			<if test="eId!=null">
+			e_id=#{eId},
+			</if>
+			<if test="score!=null">
+			score=#{score},
+			</if>
 
      	</set>
      	 where id=#{id}
@@ -83,9 +98,26 @@ score=#{score},
      	update  exam_details set is_del=0 where id=#{1}
      </delete>
      <select id="getExamDetailsById" resultMap="examDetailsMap" parameterType="ExamDetails">
-     	select 
-     	<include refid="selectFields"></include> 
-     	from exam_details where id=#{id}
+     	select a.id,
+			 a.s_id,
+			 a.e_id,
+			 a.score,
+			 e.name as sName,
+			 b.id as bid,
+			 b.ed_id,
+			 b.t_id,
+		     b.o_id,
+		     b.r_id,
+			 c.name as tName,
+			 c.analysis,
+			 d.id as optId,
+			 d.name as oName,
+			 d.is_right
+		from exam_details as a left join exam_student_details as b on a.id=b.ed_id 
+		left join tests as c on b.t_id=c.id
+		left join options as d on c.id=d.t_id
+		left join student as e on a.s_id=e.id
+		where a.id=#{id}
      </select>
      <select id="getCount" parameterType="ExamDetails" resultType="java.lang.Integer">
      	select count(1) from  exam_details 
@@ -94,5 +126,11 @@ score=#{score},
     			and ${where}
     		</if>
      	</where>
+     </select>
+     <select id="getExamDetailsBySid" resultMap="examDetailsMap" parameterType="ExamDetails">
+	     select 
+	     	<include refid="selectFields"></include> 
+	     	from exam_details 
+	     		where s_id=#{sId} and e_id=#{eId}
      </select>
 </mapper>

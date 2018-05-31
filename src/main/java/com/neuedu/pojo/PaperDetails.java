@@ -21,5 +21,6 @@ public class PaperDetails extends BaseBean{
 	@Column("is_del")
 	private Integer isDel;
 	private String tName;
+	private Integer selected=0;
 	private List<Options> options;
 }

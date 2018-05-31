@@ -42,6 +42,7 @@
                         <value>WriteDateUseDateFormat</value>
                         <value>WriteEnumUsingToString</value>
                         <value>WriteNullStringAsEmpty</value>
+                        <value>WriteNullListAsEmpty</value>
                         <value>DisableCircularReferenceDetect</value>
                     </list>
                 </property>
@@ -51,7 +52,12 @@
    <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">  
         <property name="converters" ref="dateConvert"></property>  
     </bean> 
-     <bean id="dateConvert" class="com.neuedu.core.DateConvert"/>   
-   <context:component-scan base-package="com.neuedu.service"></context:component-scan>
-	
+    <bean id="dateConvert" class="com.neuedu.core.DateConvert"/> 
+    <context:component-scan base-package="com.neuedu.service">
+    	<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>  
+    </context:component-scan>
+  	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>  
 </beans>

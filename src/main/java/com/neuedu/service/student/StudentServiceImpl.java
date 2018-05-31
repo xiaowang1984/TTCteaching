@@ -13,6 +13,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.neuedu.util.ResultData;
+
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import com.neuedu.util.Message;
 import com.neuedu.dao.GradeDao;
@@ -27,6 +29,7 @@ public class StudentServiceImpl implements IstudentService {
 
 	@Override
 	@RequestMapping("/list")
+	@Transactional
 	public ResultData getStudents(Student student) {
 		// TODO Auto-generated method stub
 		student.setOrderBy("no asc");

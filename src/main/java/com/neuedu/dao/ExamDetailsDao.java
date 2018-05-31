@@ -11,4 +11,5 @@ public interface ExamDetailsDao {
 	public int del(int id);
 	public ExamDetails getExamDetailsById(ExamDetails examDetails);
 	public int getCount(ExamDetails examDetails);
+	public ExamDetails getExamDetailsBySid(ExamDetails examDetails);
 }

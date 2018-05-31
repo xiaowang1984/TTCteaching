@@ -16,5 +16,5 @@ public class Tests extends BaseBean{
 	private String facility;
 	private String analysis;
 	@Column("is_del")
-	private Integer isDel;
+	private Integer isDel=1;
 }

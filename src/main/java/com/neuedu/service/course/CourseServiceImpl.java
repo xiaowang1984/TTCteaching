@@ -56,7 +56,6 @@ public class CourseServiceImpl implements IcourseService {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return new Message(dao.add(course));
 	}
 

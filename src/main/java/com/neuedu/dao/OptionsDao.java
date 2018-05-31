@@ -9,6 +9,7 @@ public interface OptionsDao {
 	public int add(Options options);
 	public int update(Options options);
 	public int del(int id);
+	public int delByTid(int id);
 	public Options getOptionsById(Options options);
 	public int getCount(Options options);
 }

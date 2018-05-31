@@ -45,9 +45,68 @@ public class TestsServiceImpl implements ItestsService {
 
 	@Override
 	@RequestMapping("/add")
-	public Message add(Tests tests) {
+	@Transactional
+	public Message add(Tests tests,String a,String b,String c,String d,String e,String right) {
 		// TODO Auto-generated method stub
-		return new Message(dao.add(tests));
+		int result=0;
+		result=dao.add(tests);
+		Options option=new Options();
+		if(!StringUtils.isBlank(a)){
+			option.setName(a);
+			option.setIsDel(1);
+			option.setTId(tests.getId());
+			if(right.equals("a")){
+				option.setIsRight(1);
+			}else{
+				option.setIsRight(0);
+			}
+			optionDao.add(option);
+		}
+		if(!StringUtils.isBlank(b)){
+			option.setName(b);
+			option.setIsDel(1);
+			option.setTId(tests.getId());
+			if(right.equals("b")){
+				option.setIsRight(1);
+			}else{
+				option.setIsRight(0);
+			}
+			optionDao.add(option);
+		}
+		if(!StringUtils.isBlank(c)){
+			option.setName(c);
+			option.setIsDel(1);
+			option.setTId(tests.getId());
+			if(right.equals("c")){
+				option.setIsRight(1);
+			}else{
+				option.setIsRight(0);
+			}
+			optionDao.add(option);
+		}
+		if(!StringUtils.isBlank(d)){
+			option.setName(d);
+			option.setIsDel(1);
+			option.setTId(tests.getId());
+			if(right.equals("d")){
+				option.setIsRight(1);
+			}else{
+				option.setIsRight(0);
+			}
+			optionDao.add(option);
+		}
+		if(!StringUtils.isBlank(e)){
+			option.setName(e);
+			option.setIsDel(1);
+			option.setTId(tests.getId());
+			if(right.equals("e")){
+				option.setIsRight(1);
+			}else{
+				option.setIsRight(0);
+			}
+			optionDao.add(option);
+		}
+		return new Message(result);
 	}
 
 	@Override
@@ -58,9 +117,13 @@ public class TestsServiceImpl implements ItestsService {
 	}
 
 	@Override
+	@Transactional
+	@RequestMapping("/del")
 	public Message del(int id) {
 		// TODO Auto-generated method stub
-		return new Message(dao.del(id));
+		int result=dao.del(id);
+		result= optionDao.delByTid(id);
+		return new Message(result);
 	}
 
 	@Override

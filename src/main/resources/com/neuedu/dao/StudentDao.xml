@@ -45,6 +45,9 @@
  			<if test="gId!=null">
  				and g_id=#{gId}
  			</if>
+ 			<if test="status!=null">
+ 				and status=#{status}
+ 			</if>
  			<if test="where!=null">
     			and ${where}
     		</if>
@@ -338,6 +341,9 @@
      	<where>
      		<if test="gId!=null">
  				and g_id=#{gId}
+ 			</if>
+ 			<if test="status!=null">
+ 				and status=#{status}
  			</if>
      		<if test="where!=null">
     			and ${where}

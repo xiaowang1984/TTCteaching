@@ -4,14 +4,13 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.neuedu.dao.TestsDao">
 	<resultMap type="Tests" id="testsMap">
-	<result column="id" property="id"></result>
-<result column="name" property="name"></result>
-<result column="q_id" property="qId"></result>
-<result column="skill" property="skill"></result>
-<result column="facility" property="facility"></result>
-<result column="analysis" property="analysis"></result>
-<result column="is_del" property="isDel"></result>
-
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="q_id" property="qId"></result>
+		<result column="skill" property="skill"></result>
+		<result column="facility" property="facility"></result>
+		<result column="analysis" property="analysis"></result>
+		<result column="is_del" property="isDel"></result>
 	</resultMap>
 	<sql id="selectFields">
 		<choose>

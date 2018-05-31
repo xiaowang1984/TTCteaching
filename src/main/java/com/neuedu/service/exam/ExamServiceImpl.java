@@ -1,6 +1,7 @@
 package com.neuedu.service.exam;
 
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import com.neuedu.util.ResultData;
 import com.neuedu.util.ResultExam;
 
@@ -20,9 +23,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.neuedu.util.Message;
+import com.alibaba.fastjson.JSONObject;
 import com.neuedu.dao.ExamDao;
 import com.neuedu.dao.ExamDetailsDao;
 import com.neuedu.dao.ExamStudentDetailsDao;
+import com.neuedu.dao.OptionsDao;
 import com.neuedu.dao.PaperDao;
 import com.neuedu.dao.PaperDetailsDao;
 import com.neuedu.dao.StudentDao;
@@ -51,6 +56,8 @@ public class ExamServiceImpl implements IexamService {
 	private ExamDetailsDao examDetailsDao;
 	@Resource
 	private ExamStudentDetailsDao examStudentDetailsDao;
+	@Resource
+	private OptionsDao optionDao;
 	
 	@Override
 	@RequestMapping("/list")
@@ -87,7 +94,7 @@ public class ExamServiceImpl implements IexamService {
 	}
 
 	@Override
-	@RequestMapping(value="/edit",method=RequestMethod.GET)
+	@RequestMapping(value="/get",method=RequestMethod.GET)
 	public Exam getExamById(Exam exam) {
 		// TODO Auto-generated method stub
 		return dao.getExamById(exam);
@@ -118,6 +125,9 @@ public class ExamServiceImpl implements IexamService {
 			if(exam==null){
 				return new ResultExam(0, "考试口令错误");
 			}else{
+				ExamDetails examDetails=new ExamDetails();
+				examDetails.setEId(exam.getId());
+				examDetails.setSId(id);
 				if(student.getGId().intValue()!=exam.getGId().intValue()){
 					return new ResultExam(0, "考试口令错误");
 				}else{
@@ -126,6 +136,8 @@ public class ExamServiceImpl implements IexamService {
 						return new ResultExam(0, "还未到考试时间");
 					}else if(now.getTime()>exam.getEndTime().getTime()){
 						return new ResultExam(0, "考试已经结束");
+					}else if(examDetailsDao.getExamDetailsBySid(examDetails)!=null){
+						return new ResultExam(0, "已经考过了");
 					}else{
 						return new ResultExam(1, exam);
 					}
@@ -137,10 +149,35 @@ public class ExamServiceImpl implements IexamService {
 	@Override
 	@RequestMapping("/examSubmt")
 	@Transactional
-	public String examSubmit(HttpServletRequest request,Integer sId,Integer eId) {
+	public String examSubmit(HttpServletRequest request,ExamDetails examDetails) {
 		// TODO Auto-generated method stub
 		int result=0;
+		List<PaperDetails> list=JSONObject.parseArray(request.getParameter("list"),PaperDetails.class);
+		System.out.println(list);
 		float count=0f;
+		float right=0f;
+		result+=examDetailsDao.add(examDetails);
+		for (PaperDetails paperDetails : list) {
+			ExamStudentDetails studentDetails=new ExamStudentDetails();
+			studentDetails.setEdId(examDetails.getId());
+			studentDetails.setTId(paperDetails.getTId());
+			studentDetails.setOId(paperDetails.getSelected());
+			for(Options option: paperDetails.getOptions()){
+				studentDetails.setRId(0);
+				if(option.getIsRight().intValue()==1){
+					System.out.println(option.getIsRight());
+					studentDetails.setRId(option.getId());
+					break;
+				}
+			}
+			result+=examStudentDetailsDao.add(studentDetails);
+			count++;
+			if(studentDetails.getOId().intValue()==studentDetails.getRId().intValue()&&studentDetails.getOId().intValue()!=0)
+				right++;
+		}
+		examDetails.setScore(right/count*100);
+		result+=examDetailsDao.update(examDetails);
+		/*float count=0f;
 		float right=0f;
 		ExamDetails examDetails=new ExamDetails();
 		examDetails.setEId(eId);
@@ -174,8 +211,49 @@ public class ExamServiceImpl implements IexamService {
 			result+=examStudentDetailsDao.add(examStudentDetails);	
 		}
 		examDetails.setScore(right/count*100);
-		result+=examDetailsDao.update(examDetails);
-		return String.valueOf(result);
+		result+=examDetailsDao.update(examDetails);*/
+		return String.valueOf(examDetails.getId());
+	}
+
+	@Override
+	@RequestMapping("/checkDetails")
+	public Message checkDetails(int id, String no) {
+		// TODO Auto-generated method stub
+		Student studentQuery= new Student();
+		studentQuery.setId(id);
+		Student student=studentDao.getStudentById(studentQuery);
+		if(student==null){
+			return new Message(0, "ID号不存在");
+		}else{
+			Exam exam = dao.getExamByNo(no);
+			if(exam==null){
+				return new Message(0, "考试口令错误");
+			}else{
+				ExamDetails examDetailsQuery=new ExamDetails();
+				examDetailsQuery.setSId(id);
+				examDetailsQuery.setEId(exam.getId());
+				ExamDetails examDetails=examDetailsDao.getExamDetailsBySid(examDetailsQuery);
+				if(examDetails==null){
+					return new Message(0, "无此考生成绩");
+				}else{
+					return new Message(1, examDetails.getId().toString());
+				}
+			}
+		}
+	}
+
+	@Override
+	@RequestMapping("/getReport")
+	public List<Map<String, Object>> getReport(int id) {
+		// TODO Auto-generated method stub
+		List<Map<String, Object>> result=dao.getReport(id);
+		for (Map<String, Object> map : result) {
+			Options option=new Options();
+			option.setTId( Integer.parseInt(map.get("t_id").toString()));
+			List<Options> options = optionDao.getOptionss(option);
+			map.put("options", options);
+		}
+		return result;
 	}
 	
 	

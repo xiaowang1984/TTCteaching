@@ -3,6 +3,7 @@ package com.neuedu.pojo;
 
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,4 +37,5 @@ public class Exam extends BaseBean{
 	@Column("is_del")
 	private Integer isDel;
 	private String pName;
+	private List<ExamDetails> examDetails;
 }

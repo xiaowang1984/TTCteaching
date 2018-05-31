@@ -11,11 +11,18 @@ public class DateConvert implements Converter<String, Date>  {
 	@Override
 	public Date convert(String source) {
 		// TODO Auto-generated method stub
-		  SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");  
+		 
 	        try {  
+	        	 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
 	            return simpleDateFormat.parse(source);  
 	        } catch (ParseException e) {  
-	            e.printStackTrace();  
+	            try {
+	            	SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");  
+					return simpleDateFormat.parse(source);
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}  
 	        }  
 	        return null;  
 	}

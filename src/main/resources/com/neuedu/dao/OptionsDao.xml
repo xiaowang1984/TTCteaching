@@ -92,10 +92,13 @@ is_del=#{isDel},
      <delete id="del" parameterType="java.lang.Integer">
      	update  options set is_del=0 where id=#{1}
      </delete>
+     <delete id="delByTid" parameterType="java.lang.Integer">
+     	update  options set is_del=0 where t_id=#{1}
+     </delete>
      <select id="getOptionsById" resultMap="optionsMap" parameterType="Options">
-     	select 
-     	<include refid="selectFields"></include> 
-     	from options where id=#{id}
+     	select a.id,a.name,a.description,m_id as mId,b.l_id as lId 
+     		from point as a left join module as b on a.m_id=b.id 
+     		where a.id=#{id} and is_del=1
      </select>
      <select id="getCount" parameterType="Options" resultType="java.lang.Integer">
      	select count(1) from  options 
