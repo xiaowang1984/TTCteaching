@@ -15,4 +15,5 @@ public interface IcourseService {
 	public Message del(int id);
 	public Course getCourseById(Course course);
 	public List<Course> getAll(Course course);
+	public List<Course> getCourseByGid(int gId);
 }

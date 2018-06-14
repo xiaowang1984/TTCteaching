@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.ComputerDao">
+	<resultMap type="Computer" id="computerMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="c_id" property="cId"/>
+		<result column="g_id" property="gId"></result>
+		<result column="dat" property="dat"></result>
+		<result column="question" property="question"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	<resultMap type="Computer" id="reportMap">
+		<result column="id" property="id"></result>
+		<result column="name" property="name"></result>
+		<result column="c_id" property="cId"/>
+		<result column="g_id" property="gId"></result>
+		<result column="dat" property="dat"></result>
+		<result column="is_del" property="isDel"></result>
+		<collection property="list" column="id" javaType="java.util.List" ofType="ComputerDetails" select="getComputerDetailss"></collection>
+	</resultMap>
+	<resultMap type="ComputerDetails" id="computerDetailsMap">
+		<result column="id" property="id"></result>
+		<result column="i_id" property="iId"></result>
+		<result column="s_id" property="sId"></result>
+		<result column="skill" property="skill"></result>
+		<result column="is_del" property="isDel"></result>
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, name, g_id,c_id, dat, question, is_del
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getComputers" resultMap="computerMap" parameterType="Computer">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from computer 
+ 		<where>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="Computer" useGeneratedKeys="true" keyProperty="id">
+     	insert into 
+     		computer
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="name!=null">
+			name,
+			</if>
+			<if test="gId!=null">
+			g_id,
+			</if>
+			<if test="cId!=null">
+			c_id,
+			</if>
+			<if test="dat!=null">
+			dat,
+			</if>
+			<if test="question!=null">
+			question,
+			</if>
+			<if test="isDel!=null">
+			is_del,
+			</if>
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="name!=null">
+			#{name},
+			</if>
+			<if test="gId!=null">
+			#{gId},
+			</if>
+			<if test="cId!=null">
+			#{cId},
+			</if>
+			<if test="dat!=null">
+			#{dat},
+			</if>
+			<if test="question!=null">
+			#{question},
+			</if>
+			<if test="isDel!=null">
+			#{isDel},
+			</if>
+     		</trim>
+     </insert>
+     <update id="update" parameterType="Computer">
+     	update computer 
+     	<set>
+	     	<if test="name!=null">
+			name=#{name},
+			</if>
+			<if test="gId!=null">
+			g_id=#{gId},
+			</if>
+			<if test="dat!=null">
+			dat=#{dat},
+			</if>
+			<if test="question!=null">
+			question=#{question},
+			</if>
+			<if test="isDel!=null">
+			is_del=#{isDel},
+			</if>
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  computer set is_del=0 where id=#{1}
+     </delete>
+     <select id="getComputerById" resultMap="computerMap" parameterType="Computer">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from computer where id=#{id}
+     </select>
+     <select id="getCount" parameterType="Computer" resultType="java.lang.Integer">
+     	select count(1) from  computer 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+     <select id="getReport" resultMap="reportMap" parameterType="Computer">
+ 		select
+ 			a.id, a.name, a.g_id,a.c_id ,a.dat, a.question, a.is_del,b.name as cName
+ 		from computer as a left join course as b on a.c_id=b.id
+ 		<where>
+ 			<if test="gId!=null">
+ 				and a.g_id=#{gId}
+ 			</if>
+ 			<if test="isDel!=null">
+ 				and a.is_del=#{isDel}
+ 			</if>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 	</select>
+ 	<select id="getComputerDetailss" resultMap="computerDetailsMap" parameterType="java.lang.Integer">
+ 		select
+ 			id, i_id, s_id, skill,mark, is_del
+ 		from computer_details 
+ 		<where>
+ 			i_id=#{1}
+ 		</where>
+ 	</select>
+</mapper>

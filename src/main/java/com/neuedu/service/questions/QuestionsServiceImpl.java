@@ -23,6 +23,7 @@ public class QuestionsServiceImpl implements IquestionsService {
 	@RequestMapping("/list")
 	public ResultData getQuestionss(Questions questions) {
 		// TODO Auto-generated method stub
+		questions.setOrderBy("a.name");
 		return new ResultData(dao.getQuestionss(questions),
 				dao.getCount(questions), questions.getPageSize(), questions.getPageNo());
 	}

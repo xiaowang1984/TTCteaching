@@ -58,10 +58,7 @@ public class ArrangeListServiceImpl implements IarrangeListService {
 	@RequestMapping("/logs")
 	public ResultData getLogs(Arrange arrange) {
 		// TODO Auto-generated method stub
-		arrange.setPageSize(5);
 		return new ResultData(dao.getLogs(arrange),
 				dao.getLogCount(arrange), arrange.getPageSize(), arrange.getPageNo());
 	}
-	
-	
 }

@@ -1,5 +1,7 @@
 package com.neuedu.service.exam;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,6 +33,7 @@ import com.neuedu.dao.ExamStudentDetailsDao;
 import com.neuedu.dao.OptionsDao;
 import com.neuedu.dao.PaperDao;
 import com.neuedu.dao.PaperDetailsDao;
+import com.neuedu.dao.PointDao;
 import com.neuedu.dao.StudentDao;
 import com.neuedu.pojo.Exam;
 import com.neuedu.pojo.ExamDetails;
@@ -37,6 +41,7 @@ import com.neuedu.pojo.ExamStudentDetails;
 import com.neuedu.pojo.Options;
 import com.neuedu.pojo.Paper;
 import com.neuedu.pojo.PaperDetails;
+import com.neuedu.pojo.Point;
 import com.neuedu.pojo.Student;
 import com.neuedu.service.paperDetails.IpaperDetailsService;
 
@@ -58,6 +63,8 @@ public class ExamServiceImpl implements IexamService {
 	private ExamStudentDetailsDao examStudentDetailsDao;
 	@Resource
 	private OptionsDao optionDao;
+	@Resource
+	private PointDao pointDao;
 	
 	@Override
 	@RequestMapping("/list")
@@ -77,6 +84,10 @@ public class ExamServiceImpl implements IexamService {
 			c[i]=STR.charAt(random.nextInt(STR.length()-1));
 		}
 		exam.setNo(new String(c));
+		Calendar calendar=Calendar.getInstance();
+		calendar.setTime(exam.getStartTime());
+		calendar.add(Calendar.MINUTE, exam.getLength());
+		exam.setEndTime(calendar.getTime()); 
 		return new Message(dao.add(exam));
 	}
 
@@ -84,6 +95,10 @@ public class ExamServiceImpl implements IexamService {
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Message update(Exam exam) {
 		// TODO Auto-generated method stub
+		Calendar calendar=Calendar.getInstance();
+		calendar.setTime(exam.getStartTime());
+		calendar.add(Calendar.MINUTE, exam.getLength());
+		exam.setEndTime(calendar.getTime()); 
 		return new Message(dao.update(exam));
 	}
 
@@ -149,70 +164,42 @@ public class ExamServiceImpl implements IexamService {
 	@Override
 	@RequestMapping("/examSubmt")
 	@Transactional
-	public String examSubmit(HttpServletRequest request,ExamDetails examDetails) {
-		// TODO Auto-generated method stub
-		int result=0;
-		List<PaperDetails> list=JSONObject.parseArray(request.getParameter("list"),PaperDetails.class);
-		System.out.println(list);
-		float count=0f;
-		float right=0f;
-		result+=examDetailsDao.add(examDetails);
-		for (PaperDetails paperDetails : list) {
-			ExamStudentDetails studentDetails=new ExamStudentDetails();
-			studentDetails.setEdId(examDetails.getId());
-			studentDetails.setTId(paperDetails.getTId());
-			studentDetails.setOId(paperDetails.getSelected());
-			for(Options option: paperDetails.getOptions()){
-				studentDetails.setRId(0);
-				if(option.getIsRight().intValue()==1){
-					System.out.println(option.getIsRight());
-					studentDetails.setRId(option.getId());
-					break;
+	public Object examSubmit(HttpServletRequest request,ExamDetails examDetails) {
+		JSONObject json=new JSONObject();
+		if(examDetailsDao.getCount(examDetails)>0){
+			json.put("code", "0");
+			json.put("mess", "已经提交过,禁止重复提交");
+		}else{
+			int result=0;
+			List<PaperDetails> list=JSONObject.parseArray(request.getParameter("list"),PaperDetails.class);
+			float count=0f;
+			float right=0f;
+			result+=examDetailsDao.add(examDetails);
+			for (PaperDetails paperDetails : list) {
+				ExamStudentDetails studentDetails=new ExamStudentDetails();
+				studentDetails.setEdId(examDetails.getId());
+				studentDetails.setTId(paperDetails.getTId());
+				studentDetails.setOId(paperDetails.getSelected());
+				for(Options option: paperDetails.getOptions()){
+					studentDetails.setRId(0);
+					if(option.getIsRight().intValue()==1){
+						System.out.println(option.getIsRight());
+						studentDetails.setRId(option.getId());
+						break;
+					}
 				}
+				result+=examStudentDetailsDao.add(studentDetails);
+				count++;
+				if(studentDetails.getOId().intValue()==studentDetails.getRId().intValue()&&studentDetails.getOId().intValue()!=0)
+					right++;
 			}
-			result+=examStudentDetailsDao.add(studentDetails);
-			count++;
-			if(studentDetails.getOId().intValue()==studentDetails.getRId().intValue()&&studentDetails.getOId().intValue()!=0)
-				right++;
+			examDetails.setScore(right/count*100);
+			result+=examDetailsDao.update(examDetails);
+			result+=examDetailsDao.createReportDetails(examDetails.getId());
+			json.put("code", "1");
+			json.put("mess", String.valueOf(examDetails.getId()));
 		}
-		examDetails.setScore(right/count*100);
-		result+=examDetailsDao.update(examDetails);
-		/*float count=0f;
-		float right=0f;
-		ExamDetails examDetails=new ExamDetails();
-		examDetails.setEId(eId);
-		examDetails.setSId(sId);
-		result+=examDetailsDao.add(examDetails);
-		Map<String, String[]> parameterMap = request.getParameterMap();
-		Set<String> keySet = parameterMap.keySet();
-		Exam examQuery=new Exam();
-		examQuery.setId(eId);
-		Exam exam= dao.getExamById(examQuery);
-		PaperDetails paperDetailsQuery=new PaperDetails();
-		paperDetailsQuery.setPId(exam.getPId());
-		List<PaperDetails> paperDetailsList = paperDetailsService.getPaperDetailss(paperDetailsQuery);
-		for (PaperDetails paperDetails : paperDetailsList) {
-			ExamStudentDetails examStudentDetails=new ExamStudentDetails();
-			examStudentDetails.setEdId(examDetails.getId());
-			examStudentDetails.setTId(paperDetails.getTId());
-			if(keySet.contains(String.valueOf(paperDetails.getId())))
-				examStudentDetails.setOId(Integer.parseInt(request.getParameter(String.valueOf(paperDetails.getId()))));
-			else
-				examStudentDetails.setOId(0);
-			for (Options options : paperDetails.getOptions()) {
-				if(options.getIsRight()==1){
-					examStudentDetails.setRId(options.getId());
-					break;
-				}
-			}
-			count++;
-			if(examStudentDetails.getOId()==examStudentDetails.getRId())
-				right++;
-			result+=examStudentDetailsDao.add(examStudentDetails);	
-		}
-		examDetails.setScore(right/count*100);
-		result+=examDetailsDao.update(examDetails);*/
-		return String.valueOf(examDetails.getId());
+		return json;
 	}
 
 	@Override
@@ -249,12 +236,51 @@ public class ExamServiceImpl implements IexamService {
 		List<Map<String, Object>> result=dao.getReport(id);
 		for (Map<String, Object> map : result) {
 			Options option=new Options();
+			List<Point> points=new ArrayList<>();
+			if(StringUtils.isNotBlank(map.get("skill").toString()) ){
+				
+				String[] split = map.get("skill").toString().split("\\,");
+				for (String str : split) {
+					Point pointQuery=new Point();
+					pointQuery.setId(Integer.parseInt(str));
+					pointQuery.setFields("id,name");
+					Point point= pointDao.getPointById(pointQuery);
+					points.add(point);
+				}
+				
+			}
+			
 			option.setTId( Integer.parseInt(map.get("t_id").toString()));
 			List<Options> options = optionDao.getOptionss(option);
+			map.put("skills", points);
 			map.put("options", options);
 		}
 		return result;
 	}
-	
+	@RequestMapping("/createReport")
+	@Transactional
+	public Message createReport(ExamDetails examDetails){
+		Message message = null;
+		Exam exam=new Exam();
+		exam.setId(examDetails.getEId());
+		exam.setReport(1);
+		
+		if(examDetailsDao.checkReport(examDetails)==0){
+			message=new Message(0, "无人进行考试无法生成报表");
+		}else{
+			int result=0;
+			result+=dao.update(exam);
+			result+=dao.delReport(examDetails.getEId());
+			result+=dao.createReport(examDetails.getEId());
+			result+=dao.delReportTest(examDetails.getEId());
+			
+			result+=dao.createReportTest(examDetails.getEId());
+			if(result>0)
+				message=new Message(1, "报表生成完成");
+			else
+				message=new Message(0, "报表生成失败");
+		}
+		return message;
+	}
 	
 }

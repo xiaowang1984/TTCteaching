@@ -1,5 +1,7 @@
 package com.neuedu.pojo;
 
+import java.util.List;
+
 import com.neuedu.util.BaseBean;
 
 import lombok.Data;
@@ -17,4 +19,5 @@ public class Tests extends BaseBean{
 	private String analysis;
 	@Column("is_del")
 	private Integer isDel=1;
+	private List<Point> points;
 }

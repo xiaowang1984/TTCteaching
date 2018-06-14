@@ -6,14 +6,14 @@
 	<resultMap type="Questions" id="questionsMap">
 		<result column="id" property="id"></result>
 		<result column="name" property="name"></result>
-		<result column="c_id" property="cId"></result>
-		<result column="point" property="point"></result>
+		<result column="l_id" property="lId"></result>
+		<result column="type" property="type"></result>
 		<result column="is_del" property="isDel"></result>
 	</resultMap>
 	<sql id="selectFields">
 		<choose>
  				<when test="fields==null">
- 					 id, name, c_id, point, is_del 
+ 					 id, name, l_id, type, is_del 
  				</when>
  				<otherwise>
  					${fields}
@@ -22,9 +22,15 @@
 	</sql>
  	<select id="getQuestionss" resultMap="questionsMap" parameterType="Questions">
  		select
- 			a.id, a.name, a.c_id, a.point, a.is_del,b.name as cName
- 		from questions as a left join course as b on a.c_id=b.id 
+ 			a.id, a.name, a.l_id, a.type, a.is_del,b.name as lName
+ 		from questions as a left join language as b on a.l_id=b.id 
  		<where>
+ 			<if test="lId!=null">
+ 				and a.l_id=#{lId}
+ 			</if>
+ 			<if test="type!=null">
+ 				and a.type=#{type}
+ 			</if>
  			<if test="isDel!=null">
     			and a.is_del=#{isDel}
     		</if>
@@ -43,11 +49,11 @@
 				<if test="name!=null">
 				name,
 				</if>
-				<if test="cId!=null">
-				c_id,
+				<if test="lId!=null">
+				l_id,
 				</if>
-				<if test="point!=null">
-				point,
+				<if test="type!=null">
+				type,
 				</if>
 				<if test="isDel!=null">
 				is_del,
@@ -57,11 +63,11 @@
 				<if test="name!=null">
 				#{name},
 				</if>
-				<if test="cId!=null">
-				#{cId},
+				<if test="lId!=null">
+				#{lId},
 				</if>
-				<if test="point!=null">
-				#{point},
+				<if test="type!=null">
+				#{type},
 				</if>
 				<if test="isDel!=null">
 				#{isDel},
@@ -74,11 +80,11 @@
 			<if test="name!=null">
 			name=#{name},
 			</if>
-			<if test="cId!=null">
-			c_id=#{cId},
+			<if test="lId!=null">
+			l_id=#{lId},
 			</if>
-			<if test="point!=null">
-			point=#{point},
+			<if test="type!=null">
+			type=#{type},
 			</if>
 			<if test="isDel!=null">
 			is_del=#{isDel},
@@ -97,11 +103,15 @@
      <select id="getCount" parameterType="Questions" resultType="java.lang.Integer">
      	select count(1) from  questions 
      	<where>
-     		<where>
-	 			<if test="isDel!=null">
-	    			and is_del=#{isDel}
-	    		</if>
-	 		</where>
+ 			<if test="lId!=null">
+ 				and l_id=#{lId}
+ 			</if>
+ 			<if test="type!=null">
+ 				and type=#{type}
+ 			</if>
+ 			<if test="isDel!=null">
+    			and is_del=#{isDel}
+    		</if>
      	</where>
      </select>
 </mapper>

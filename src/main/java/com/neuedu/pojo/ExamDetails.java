@@ -20,5 +20,6 @@ public class ExamDetails extends BaseBean {
 	private Integer eId;
 	private Float score;
 	private String sName;
+	private Integer time;
 	private List<ExamStudentDetails> examStudentDetails;
 }

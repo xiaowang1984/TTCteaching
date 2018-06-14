@@ -35,6 +35,7 @@ public class CourseServiceImpl implements IcourseService {
 	public ResultData getCourses(Course course) {
 		// TODO Auto-generated method stub
 		course.setOrderBy("name");
+		course.setWithPage(0);
 		return new ResultData(dao.getCourses(course),
 				dao.getCount(course), course.getPageSize(), course.getPageNo());
 	}
@@ -100,6 +101,7 @@ public class CourseServiceImpl implements IcourseService {
 	public List<Course> getAll(Course course) {
 		// TODO Auto-generated method stub
 		course.setWithPage(0);
+		course.setIsDel(1);
 		List<Course> courses=dao.getCourses(course);
 		for (Course course2 : courses) {
 			Plan plan=new Plan();
@@ -108,6 +110,13 @@ public class CourseServiceImpl implements IcourseService {
 			course2.setPlans(planDao.getPlans(plan));
 		}
 		return courses;
+	}
+
+	@Override
+	@RequestMapping(value="/getCourseByGid")
+	public List<Course> getCourseByGid(int gId) {
+		// TODO Auto-generated method stub
+		return dao.getComputerCourse(gId);
 	}
 	
 	

@@ -12,4 +12,7 @@ public interface ExamDetailsDao {
 	public ExamDetails getExamDetailsById(ExamDetails examDetails);
 	public int getCount(ExamDetails examDetails);
 	public ExamDetails getExamDetailsBySid(ExamDetails examDetails);
+	public int checkReport(ExamDetails examDetails);
+	public int createReportDetails(int id);
+	
 }

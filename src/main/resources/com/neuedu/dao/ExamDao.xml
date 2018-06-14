@@ -11,6 +11,7 @@
 		<result column="g_id" property="gId"></result>
 		<result column="status" property="status"></result>
 		<result column="start_time" property="startTime"></result>
+		<result column="length" property="length"/>
 		<result column="end_time" property="endTime"></result>
 		<result column="is_del" property="isDel"></result>
 		<association property="pName" column="p_id" javaType="java.lang.String" select="getPname"></association>
@@ -26,7 +27,8 @@
 		<result column="end_time" property="endTime"></result>
 		<result column="is_del" property="isDel"></result>
 		<collection property="examDetails" column="id" javaType="java.util.List" ofType="ExamDetails">
-			<result column="id" property="id"></result>
+			<result column="length" property="time"/>
+			<result column="dId" property="id"></result>
 			<result column="s_id" property="sId"></result>
 			<result column="e_id" property="eId"></result>
 			<result column="sName" property="sName"></result>
@@ -36,7 +38,7 @@
 	<sql id="selectFields">
 		<choose>
  				<when test="fields==null">
- 					 id, name, p_id, no, g_id, status, start_time, end_time, is_del 
+ 					 id, name, p_id, no, g_id, status, start_time,length, end_time,report, is_del 
  				</when>
  				<otherwise>
  					${fields}
@@ -70,56 +72,62 @@
      		exam
      		<trim prefix="(" suffix=")" suffixOverrides=",">
 	     		<if test="name!=null">
-name,
-</if>
-<if test="pId!=null">
-p_id,
-</if>
-<if test="no!=null">
-no,
-</if>
-<if test="gId!=null">
-g_id,
-</if>
-<if test="status!=null">
-status,
-</if>
-<if test="startTime!=null">
-start_time,
-</if>
-<if test="endTime!=null">
-end_time,
-</if>
-<if test="isDel!=null">
-is_del,
-</if>
+				name,
+				</if>
+				<if test="pId!=null">
+				p_id,
+				</if>
+				<if test="no!=null">
+				no,
+				</if>
+				<if test="gId!=null">
+				g_id,
+				</if>
+				<if test="status!=null">
+				status,
+				</if>
+				<if test="startTime!=null">
+				start_time,
+				</if>
+				<if test="length!=null">
+				length,
+				</if>
+				<if test="endTime!=null">
+				end_time,
+				</if>
+				<if test="isDel!=null">
+				is_del,
+				</if>
 
      		</trim>
      		<trim prefix="values (" suffix=")" suffixOverrides=",">
      			<if test="name!=null">
-#{name},
-</if>
-<if test="pId!=null">
-#{pId},
-</if>
-<if test="no!=null">
-#{no},
-</if>
-<if test="gId!=null">
-#{gId},
-</if>
-<if test="status!=null">
-#{status},
-</if>
-<if test="startTime!=null">
-#{startTime},
-</if>
-<if test="endTime!=null">
-#{endTime},
-</if>
-<if test="isDel!=null">
-#{isDel},
-</if>
+				#{name},
+				</if>
+				<if test="pId!=null">
+				#{pId},
+				</if>
+				<if test="no!=null">
+				#{no},
+				</if>
+				<if test="gId!=null">
+				#{gId},
+				</if>
+				<if test="status!=null">
+				#{status},
+				</if>
+				<if test="startTime!=null">
+				#{startTime},
+				</if>
+				<if test="length!=null">
+				#{length},
+				</if>
+				<if test="endTime!=null">
+				#{endTime},
+				</if>
+				<if test="isDel!=null">
+				#{isDel},
+				</if>
 
      		</trim>
      </insert>
@@ -127,29 +135,35 @@ is_del,
      	update exam 
      	<set>
 	     	<if test="name!=null">
-name=#{name},
-</if>
-<if test="pId!=null">
-p_id=#{pId},
-</if>
-<if test="no!=null">
-no=#{no},
-</if>
-<if test="gId!=null">
-g_id=#{gId},
-</if>
-<if test="status!=null">
-status=#{status},
-</if>
-<if test="startTime!=null">
-start_time=#{startTime},
-</if>
-<if test="endTime!=null">
-end_time=#{endTime},
-</if>
-<if test="isDel!=null">
-is_del=#{isDel},
-</if>
+			name=#{name},
+			</if>
+			<if test="pId!=null">
+			p_id=#{pId},
+			</if>
+			<if test="no!=null">
+			no=#{no},
+			</if>
+			<if test="gId!=null">
+			g_id=#{gId},
+			</if>
+			<if test="status!=null">
+			status=#{status},
+			</if>
+			<if test="startTime!=null">
+			start_time=#{startTime},
+			</if>
+			<if test="length!=null">
+			length=#{length},
+			</if>
+			<if test="report!=null">
+			report=#{report},
+			</if>
+			<if test="endTime!=null">
+			end_time=#{endTime},
+			</if>
+			<if test="isDel!=null">
+			is_del=#{isDel},
+			</if>
 
      	</set>
      	 where id=#{id}
@@ -159,19 +173,22 @@ is_del=#{isDel},
      </delete>
      <select id="getExamById" resultMap="examDetails" parameterType="Exam">
      	select 
-			a.id,a.name,
-			a.p_id,a.no,
-			a.g_id,a.status,
-			a.start_time,
-			a.end_time,
-			b.id as dId,
-		    b.s_id,
-		    b.e_id,
-		    b.score,
-		    c.name as sName
-		from exam as a left join exam_details as b on a.id=b.e_id 
-		left join student as c on b.s_id=c.id
-		where a.id=#{id}
+			id,
+			name,
+			p_id,
+			no,
+			g_id,
+			status,
+			start_time,
+			end_time,
+			length,
+			dId,
+			s_id,
+			e_id,
+			score,
+			sName
+		from reportList
+		where id=#{id}
      </select>
      <select id="getCount" parameterType="Exam" resultType="java.lang.Integer">
      	select count(1) from  exam 
@@ -199,6 +216,7 @@ is_del=#{isDel},
      		g_id, 
      		status, 
      		start_time, 
+     		length,
      		end_time, 
      		is_del 
      	from exam 
@@ -206,6 +224,64 @@ is_del=#{isDel},
      </select>
      <select id="getReport" parameterType="java.lang.Integer" resultType="java.util.Map">
      	select 
+			id,
+			p_id,
+			t_id,
+			name,
+			skill,
+			total,
+			r
+			from reportTest
+		  where id=#{1}
+     </select>
+     <delete id="delReport" parameterType="java.lang.Integer">
+     	delete from reportList where id=#{1}
+     </delete>
+     <insert id="createReport" parameterType="java.lang.Integer">
+     	insert into reportList(
+			id,
+			name,
+			p_id,
+			no,
+			g_id,
+			status,
+			start_time,
+			end_time,
+			length,
+			dId,
+			s_id,
+			e_id,
+			score,
+			sName
+		) select 
+			a.id,a.name,
+			a.p_id,a.no,
+			a.g_id,a.status,
+			a.start_time,
+			a.end_time,
+			b.time,
+			b.id as dId,
+		    b.s_id,
+		    b.e_id,
+		    b.score,
+		    c.name as sName
+		from exam as a left join exam_details as b on a.id=b.e_id 
+		left join student as c on b.s_id=c.id
+		where a.id=#{1}
+     </insert>
+     <delete id="delReportTest" parameterType="java.lang.Integer">
+     	delete from reportTest where id=#{1}
+     </delete>
+     <insert id="createReportTest" parameterType="java.lang.Integer">
+     	insert into reportTest(
+			id,
+			p_id,
+			t_id,
+			name,
+			skill,
+			total,
+			r
+		)select 
 			a.id,
 			a.p_id,
 			b.t_id,
@@ -217,5 +293,5 @@ is_del=#{isDel},
 		left join paper_details as b on a.p_id=b.p_id 
 		left join tests as c on b.t_id=c.id
 		  where a.id=#{1}
-     </select>
+     </insert>
 </mapper>

@@ -24,5 +24,7 @@ public class ExamStudentDetails extends BaseBean {
 	private Integer rId;
 	private String tName;
 	private String analysis;
+	private String skill;
 	private List<Options> options;
+	private List<Point> point;
 }

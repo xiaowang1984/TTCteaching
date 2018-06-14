@@ -17,6 +17,7 @@
 			<result column="r_id" property="rId"></result>
 			<result column="tName" property="tName"/>
 			<result column="analysis" property="analysis"/>
+			<result column="skill" property="skill"/>
 			<collection property="options" javaType="java.util.List" ofType="Options" column="t_id">
 				<result column="optId" property="id"/>
 				<result column="oName" property="name"/>
@@ -27,7 +28,7 @@
 	<sql id="selectFields">
 		<choose>
  				<when test="fields==null">
- 					 id, s_id, e_id, score 
+ 					 id, s_id, e_id, score,time
  				</when>
  				<otherwise>
  					${fields}
@@ -63,7 +64,9 @@
 				<if test="score!=null">
 				score,
 				</if>
-
+				<if test="time!=null">
+				time,
+				</if>
      		</trim>
      		<trim prefix="values (" suffix=")" suffixOverrides=",">
      			<if test="sId!=null">
@@ -75,7 +78,9 @@
 				<if test="score!=null">
 				#{score},
 				</if>
-
+				<if test="time!=null">
+				#{time},
+				</if>
      		</trim>
      </insert>
      <update id="update" parameterType="ExamDetails">
@@ -90,7 +95,9 @@
 			<if test="score!=null">
 			score=#{score},
 			</if>
-
+			<if test="time!=null">
+			time=#{time},
+			</if>
      	</set>
      	 where id=#{id}
      </update>
@@ -98,7 +105,40 @@
      	update  exam_details set is_del=0 where id=#{1}
      </delete>
      <select id="getExamDetailsById" resultMap="examDetailsMap" parameterType="ExamDetails">
-     	select a.id,
+     	select * from reportDetails
+		where id=#{id}
+     </select>
+     <select id="getCount" parameterType="ExamDetails" resultType="java.lang.Integer">
+     	select count(1) from exam_details where s_id=#{sId} and  e_id=#{eId}
+     </select>
+      <select id="checkReport" parameterType="ExamDetails" resultType="java.lang.Integer">
+     	select count(1) from exam_details where e_id=#{eId}
+     </select>
+     <select id="getExamDetailsBySid" resultMap="examDetailsMap" parameterType="ExamDetails">
+	     select 
+	     	<include refid="selectFields"></include> 
+	     	from exam_details 
+	     		where s_id=#{sId} and e_id=#{eId}
+     </select>
+     <insert id="createReportDetails" parameterType="java.lang.Integer">
+     	insert into reportDetails(
+			id,
+			s_id,
+			e_id,
+			score,
+			sName,
+			bid,
+			ed_id,
+			t_id,
+			o_id,
+			r_id,
+			tName,
+			analysis,
+			skill,
+			optId,
+			oName,
+			is_right
+		)select a.id,
 			 a.s_id,
 			 a.e_id,
 			 a.score,
@@ -110,6 +150,7 @@
 		     b.r_id,
 			 c.name as tName,
 			 c.analysis,
+			 c.skill,
 			 d.id as optId,
 			 d.name as oName,
 			 d.is_right
@@ -117,20 +158,7 @@
 		left join tests as c on b.t_id=c.id
 		left join options as d on c.id=d.t_id
 		left join student as e on a.s_id=e.id
-		where a.id=#{id}
-     </select>
-     <select id="getCount" parameterType="ExamDetails" resultType="java.lang.Integer">
-     	select count(1) from  exam_details 
-     	<where>
-     		<if test="where!=null">
-    			and ${where}
-    		</if>
-     	</where>
-     </select>
-     <select id="getExamDetailsBySid" resultMap="examDetailsMap" parameterType="ExamDetails">
-	     select 
-	     	<include refid="selectFields"></include> 
-	     	from exam_details 
-	     		where s_id=#{sId} and e_id=#{eId}
-     </select>
+		where a.id=#{1}
+     	
+     </insert>
 </mapper>

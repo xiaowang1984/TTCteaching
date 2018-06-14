@@ -11,4 +11,5 @@ public interface CourseDao {
 	public int del(int id);
 	public Course getCourseById(Course course);
 	public int getCount(Course course);
+	public List<Course> getComputerCourse(int gId);
 }

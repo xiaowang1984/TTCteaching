@@ -26,10 +26,12 @@ public class Exam extends BaseBean{
 	@Column("g_id")
 	private Integer gId;
 	private Integer status;
+	private Integer report;
 	@Column("start_time")
 	@JSONField(format="yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
 	private Date startTime;
+	private Integer length;
 	@Column("end_time")
 	@JSONField(format="yyyy-MM-dd HH:mm:ss")
 	@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")

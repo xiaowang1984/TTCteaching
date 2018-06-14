@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neuedu.dao.ComputerDetailsDao">
+	<resultMap type="ComputerDetails" id="computerDetailsMap">
+		<result column="id" property="id"></result>
+<result column="i_id" property="iId"></result>
+<result column="s_id" property="sId"></result>
+<result column="skill" property="skill"></result>
+<result column="is_del" property="isDel"></result>
+<result column="mark" property="mark"></result>
+<result column="sname" property="sname"></result>
+
+	</resultMap>
+	<sql id="selectFields">
+		<choose>
+ 				<when test="fields==null">
+ 					 id, i_id, s_id, skill, is_del, mark, sname 
+ 				</when>
+ 				<otherwise>
+ 					${fields}
+ 				</otherwise>
+ 			</choose>
+	</sql>
+ 	<select id="getComputerDetailss" resultMap="computerDetailsMap" parameterType="ComputerDetails">
+ 		select
+ 			<include refid="selectFields"></include>
+ 		from computer_details 
+ 		<where>
+ 			<if test="where!=null">
+    			and ${where}
+    		</if>
+ 		</where>
+ 		<if test="orderBy!=null">
+    		order by ${orderBy}
+    	</if>
+ 		<if test="withPage==1">
+ 			limit #{pageStart},#{pageSize}
+ 		</if>
+ 	</select>
+     <insert id="add" parameterType="ComputerDetails">
+     	insert into 
+     		computer_details
+     		<trim prefix="(" suffix=")" suffixOverrides=",">
+	     		<if test="iId!=null">
+i_id,
+</if>
+<if test="sId!=null">
+s_id,
+</if>
+<if test="skill!=null">
+skill,
+</if>
+<if test="isDel!=null">
+is_del,
+</if>
+<if test="mark!=null">
+mark,
+</if>
+
+
+     		</trim>
+     		<trim prefix="values (" suffix=")" suffixOverrides=",">
+     			<if test="iId!=null">
+#{iId},
+</if>
+<if test="sId!=null">
+#{sId},
+</if>
+<if test="skill!=null">
+#{skill},
+</if>
+<if test="isDel!=null">
+#{isDel},
+</if>
+<if test="mark!=null">
+#{mark},
+</if>
+
+
+     		</trim>
+     </insert>
+     <update id="update" parameterType="ComputerDetails">
+     	update computer_details 
+     	<set>
+			<if test="sId!=null">
+			s_id=#{sId},
+			</if>
+			<if test="skill!=null">
+			skill=#{skill},
+			</if>
+			<if test="isDel!=null">
+			is_del=#{isDel},
+			</if>
+			<if test="mark!=null">
+			mark=#{mark},
+			</if>
+     	</set>
+     	 where id=#{id}
+     </update>
+     <delete id="del" parameterType="java.lang.Integer">
+     	update  computer_details set is_del=0 where id=#{1}
+     </delete>
+     <select id="getComputerDetailsById" resultMap="computerDetailsMap" parameterType="ComputerDetails">
+     	select 
+     	<include refid="selectFields"></include> 
+     	from computer_details where id=#{id}
+     </select>
+     <select id="getCount" parameterType="ComputerDetails" resultType="java.lang.Integer">
+     	select count(1) from  computer_details 
+     	<where>
+     		<if test="where!=null">
+    			and ${where}
+    		</if>
+     	</where>
+     </select>
+</mapper>

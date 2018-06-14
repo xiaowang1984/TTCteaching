@@ -22,7 +22,7 @@ public interface IexamService {
 	public Exam getExamById(Exam exam);
 	public List<Paper> getPapers();
 	public ResultExam getPaper(int id,String no);
-	public String examSubmit(HttpServletRequest request,ExamDetails examDetails);
+	public Object examSubmit(HttpServletRequest request,ExamDetails examDetails);
 	public Message checkDetails(int id,String no);
 	public List<Map<String,Object>>  getReport(int id);
 }

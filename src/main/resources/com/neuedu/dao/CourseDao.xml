@@ -25,6 +25,9 @@
  			<include refid="selectFields"></include>
  		from course 
  		<where>
+ 			<if test="isDel!=null">
+    			and  is_del=#{isDel}
+    		</if>
  			<if test="where!=null">
     			and ${where}
     		</if>
@@ -101,5 +104,8 @@
     			and ${where}
     		</if>
      	</where>
+     </select>
+     <select id="getComputerCourse" parameterType="java.lang.Integer" resultMap="courseMap">
+     	select id,name from course where id in (select c_id from plan where id in (select p_id from arrange where g_id=#{1}))
      </select>
 </mapper>

@@ -22,8 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.neuedu.util.Message;
 import com.neuedu.dao.OptionsDao;
+import com.neuedu.dao.PointDao;
 import com.neuedu.dao.TestsDao;
 import com.neuedu.pojo.Options;
+import com.neuedu.pojo.Point;
 import com.neuedu.pojo.Student;
 import com.neuedu.pojo.Tests;
 
@@ -34,12 +36,26 @@ public class TestsServiceImpl implements ItestsService {
 	private TestsDao dao;
 	@Resource
 	private OptionsDao optionDao;
-
+	@Resource
+	private PointDao pointDao;
 	@Override
 	@RequestMapping("/list")
 	public ResultData getTestss(Tests tests) {
 		// TODO Auto-generated method stub
-		return new ResultData(dao.getTestss(tests),
+		List<Tests> list=dao.getTestss(tests);
+		for (Tests tests2 : list) {
+			if(StringUtils.isNotBlank(tests2.getSkill())){
+				List<Point> points=new ArrayList<>();
+				for (String id : tests2.getSkill().split(",")) {
+					Point point=new Point();
+					point.setFields("id,name");
+					point.setId(Integer.valueOf(id));
+					points.add(pointDao.getPointById(point));
+				}
+				tests2.setPoints(points);
+			}
+		}
+		return new ResultData(list,
 				dao.getCount(tests), tests.getPageSize(), tests.getPageNo());
 	}
 
@@ -130,7 +146,18 @@ public class TestsServiceImpl implements ItestsService {
 	@RequestMapping(value="/edit",method=RequestMethod.GET)
 	public Tests getTestsById(Tests tests) {
 		// TODO Auto-generated method stub
-		return dao.getTestsById(tests);
+		Tests test=dao.getTestsById(tests);
+		if(StringUtils.isNotBlank(test.getSkill())){
+			List<Point> points=new ArrayList<>();
+			for (String id : test.getSkill().split(",")) {
+				Point point=new Point();
+				point.setFields("id,name");
+				point.setId(Integer.valueOf(id));
+				points.add(pointDao.getPointById(point));
+			}
+			test.setPoints(points);
+		}
+		return test;
 	}
 	
 	@RequestMapping("/options")

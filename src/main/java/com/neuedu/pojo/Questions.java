@@ -9,10 +9,10 @@ import util.Column;
 public class Questions extends BaseBean{
 	private Integer id;
 	private String name;
-	@Column("c_id")
-	private Integer cId;
-	private String point;
+	@Column("l_id")
+	private Integer lId;
+	private Integer type;
 	@Column("is_del")
 	private Integer isDel;
-	private String cName;
+	private String lName;
 }

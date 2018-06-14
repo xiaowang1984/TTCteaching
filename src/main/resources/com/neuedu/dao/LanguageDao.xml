@@ -24,13 +24,13 @@
 	
 	<sql id="selectFields">
 		<choose>
- 				<when test="fields==null">
- 					 id, name, git_url, img_url, is_del 
- 				</when>
- 				<otherwise>
- 					${fields}
- 				</otherwise>
- 			</choose>
+			<when test="fields==null">
+				 id, name, git_url, img_url, is_del 
+			</when>
+			<otherwise>
+				${fields}
+			</otherwise>
+		</choose>
 	</sql>
  	<select id="getLanguages" resultMap="languageMap" parameterType="Language">
  		select 

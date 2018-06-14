@@ -5,9 +5,8 @@
 <mapper namespace="com.neuedu.dao.PaperDao">
 	<resultMap type="Paper" id="paperMap">
 		<result column="id" property="id"></result>
-<result column="name" property="name"></result>
-<result column="is_del" property="isDel"></result>
-
+		<result column="name" property="name"></result>
+		<result column="is_del" property="isDel"></result>
 	</resultMap>
 	<sql id="selectFields">
 		<choose>
@@ -20,16 +19,22 @@
  			</choose>
 	</sql>
  	<select id="getPapers" resultMap="paperMap" parameterType="Paper">
- 		select
- 			<include refid="selectFields"></include>
- 		from paper 
+ 		select a.id,
+			a.name,
+			a.owner,
+			a.is_del,
+			b.name as tName
+		from paper as a left join teacher as b on a.owner=b.id
  		<where>
- 			<if test="where!=null">
-    			and ${where}
+ 			<if test="owner!=null">
+    			and a.owner=#{owner}
+    		</if>
+ 			<if test="isDel!=null">
+    			and a.is_del=#{isDel}
     		</if>
  		</where>
  		<if test="orderBy!=null">
-    		order by ${orderBy}
+    		order by a.name
     	</if>
  		<if test="withPage==1">
  			limit #{pageStart},#{pageSize}
@@ -81,8 +86,11 @@ is_del=#{isDel},
      <select id="getCount" parameterType="Paper" resultType="java.lang.Integer">
      	select count(1) from  paper 
      	<where>
-     		<if test="where!=null">
-    			and ${where}
+     		<if test="owner!=null">
+    			and owner=#{owner}
+    		</if>
+ 			<if test="isDel!=null">
+    			and is_del=#{isDel}
     		</if>
      	</where>
      </select>

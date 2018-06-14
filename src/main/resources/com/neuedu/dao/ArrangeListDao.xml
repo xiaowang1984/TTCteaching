@@ -172,8 +172,8 @@
      	select 
      		a.date,a.morning,a.afternoon,a.night 
      		from arrange_list as a left join arrange as b 
-			on a.a_id=b.id where b.g_id=#{gId} order by a.date desc
-			limit #{pageStart},#{pageSize}
+			on a.a_id=b.id where b.g_id=#{gId} order by a.date asc
+			
      </select>
      <select id="getLogCount" parameterType="Arrange" resultType="java.lang.Integer">
      	select 

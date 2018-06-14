@@ -14,4 +14,8 @@ public interface ExamDao {
 	public int getCount(Exam exam);
 	public Exam getExamByNo(String no);
 	public List<Map<String,Object>>  getReport(int id);
+	public int delReport(int id);
+	public int createReport(int id);
+	public int delReportTest(int id);
+	public int createReportTest(int id);
 }
